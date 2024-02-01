@@ -4,8 +4,8 @@
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
-| TeamID      |        Team-029        |
-| TeamName    |        sqlTraders      |
+| TeamID      |        Team-108        |
+| TeamName    |        SQLScholars     |
 | Captain     |       Pranav Sharma    |
 | Captain     | pranav24@illinois.edu  |
 | Member1     |       Panshul Jindal   |

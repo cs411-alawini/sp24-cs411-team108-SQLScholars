@@ -1,0 +1,6 @@
+# Files for the backend folder
+
+backend/node_modules/
+backend/package-lock.json
+backend/.env
+backend/dist/

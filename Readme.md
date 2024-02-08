@@ -1,4 +1,4 @@
-# Team108-SQLScholars
+# team108-SQLScholars
 This is a template for CS411 project repository. Please make sure that your title follows the convention: [TeamID]-[YourTeamName]. All TeamIDs should have a three-digit coding. 
 
 Once you set up your project, please remember to submit your team formation to the team form.

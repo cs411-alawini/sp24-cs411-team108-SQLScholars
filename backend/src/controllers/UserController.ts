@@ -20,5 +20,9 @@ class AuthController{
         return apiResponse("User Details Edited", RESPONSE.HTTP_OK, {}, res);
     }
 
+    static async searchInUsers(req, res, next){
+        return apiResponse("Student searched", RESPONSE.HTTP_OK, {}, res);
+    }
+
 }
 export default AuthController;

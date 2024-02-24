@@ -18,7 +18,7 @@ export const sqlPool = mysql.createPool({
     database: 'illinicms'
 }).promise()
 
-app.use("/api/auth", AuthRouter);
+app.use("/api/user", AuthRouter);
 app.use("/api/classroom", ClassroomRouter);
 app.use("/api/course", CourseRouter);
 app.use("/api/classroomgroup", ClassroomGroupRouter);

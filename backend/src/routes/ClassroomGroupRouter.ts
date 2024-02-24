@@ -16,7 +16,7 @@ class ClassroomGroupRouter{
         this.router.get("/fetch", ClassroomGroupController.fetchClassroomGroupsForUser);
     }
     putRoutes(){
-        this.router.put("/editUser", ClassroomGroupController.editClassroomGroups);
+        this.router.put("/edit", ClassroomGroupController.editClassroomGroups);
     }
 }
 export default new ClassroomGroupRouter().router;

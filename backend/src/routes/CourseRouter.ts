@@ -16,7 +16,7 @@ class CourseRouter{
 
     }
     putRoutes(){
-        this.router.put("/editCourse", CourseController.editCourses);
+        this.router.put("/edit", CourseController.editCourses);
     }
 }
 export default new CourseRouter().router;

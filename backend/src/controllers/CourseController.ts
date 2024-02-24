@@ -9,7 +9,11 @@ class CourseController{
     }
 
     static async getCourses(req, res, next){
-        return apiResponse("Courses Fetched", RESPONSE.HTTP_CREATED, {}, res);
+        return apiResponse("Courses Fetched", RESPONSE.HTTP_OK, {}, res);
+    }
+
+    static async editCourses(req, res, next){
+        return apiResponse("Courses Edited", RESPONSE.HTTP_OK, {}, res);
     }
 }
 export default CourseController;

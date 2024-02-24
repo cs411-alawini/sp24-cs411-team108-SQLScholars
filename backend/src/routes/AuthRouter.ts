@@ -7,13 +7,17 @@ class AuthRouter{
         this.router = Router();
         this.postRoutes();
         this.getRoutes();
+        this.putRoutes();
     }
     postRoutes(){
-        this.router.post("/createUser", AuthController.createUser);
+        this.router.post("/signupUser", AuthController.signupUser);
         this.router.post("/loginUser", AuthController.loginUser);
     }
     getRoutes(){
         this.router.get("/getUserProfile", AuthController.getUserProfile);
+    }
+    putRoutes(){
+        this.router.put("/editUser", AuthController.editUserDetails);
     }
 }
 export default new AuthRouter().router;

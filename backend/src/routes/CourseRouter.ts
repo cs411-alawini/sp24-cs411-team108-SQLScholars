@@ -12,8 +12,11 @@ class CourseRouter{
         this.router.post("/create", CourseController.createCourse);
     }
     getRoutes(){
-        this.router.get("/", CourseController.getCourses);
+        this.router.get("/fetch", CourseController.getCourses);
 
+    }
+    putRoutes(){
+        this.router.put("/editCourse", CourseController.editCourses);
     }
 }
 export default new CourseRouter().router;

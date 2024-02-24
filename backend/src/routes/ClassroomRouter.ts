@@ -16,7 +16,7 @@ class ClassroomRouter{
         this.router.get("/fetch", ClassroomController.getClassrooms);
     }
     putRoutes(){
-        this.router.put("/editUser", ClassroomController.editClassrooms);
+        this.router.put("/editUser", ClassroomController.editClassroom);
     }
 }
 export default new ClassroomRouter().router;

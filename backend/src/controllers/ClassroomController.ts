@@ -11,7 +11,7 @@ class ClassroomController{
     static async getClassrooms(req, res, next){
         return apiResponse("Classrooms Fetched", RESPONSE.HTTP_OK, {}, res);
     }
-    static async editClassrooms(req, res, next){
+    static async editClassroom(req, res, next){
         return apiResponse("Classroom Edited", RESPONSE.HTTP_OK, {}, res);
     }
 }

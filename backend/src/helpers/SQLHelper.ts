@@ -4,10 +4,29 @@ class SQLHelper{
     constructor(){};
 
     static async executeQuery(query: string){
-        return await sqlPool.query(query);
+        try{
+            const response = await sqlPool.query(query);
+            return response;
+        } catch(error){
+            console.log("Error in query execution", error);
+            return null;
+        }
+        
     }
     static emailCheckQuery(email: String){
-        return `SELECT * FROM USERS where emailId=${email}`;
+        return `SELECT * FROM Users where email='${email}';`;
+    }
+
+    static getClassroomGroupsByClassroomId(classroomId: String){
+        return `SELECT * FROM ClassroomGroups where classroomId = "${classroomId}";`;
+    }
+
+    static getClassroomIdByUserId(userId: String, LIMIT: number = -1){
+        if (LIMIT === -1) {
+            return `SELECT classroomId FROM ClassroomUsers where userId = "${userId}";`;
+        } else {
+            return `SELECT classroomId FROM ClassroomUsers where userId = "${userId}" LIMIT ${LIMIT};`;
+        }
     }
 }
 export default SQLHelper;

@@ -1,6 +1,6 @@
 import RESPONSE from "../constants/ResponseConstants";
 import { apiResponse } from "../helpers/ApiResponse";
-import SQLHelper from "../helpers/SqlHelper";
+import SQLHelper from "../helpers/SQLHelper";
 
 class AuthController{
     constructor(){}

@@ -208,14 +208,61 @@ class PopulateDataService{
     static async populateAssignmentData(){
         //Populate Assignment Data
         var mainAssignmentQuery = "";
-        for(let i=0; i<100; i++){
-            
+        for(let i=0; i<300; i++){
+            const randomClassroomGroup = `CGID${(faker.number.int({min: 0, max: 143})).toString().padStart(5, '0')}`;
+            const executeRandomClassroomGroupData: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupById(randomClassroomGroup));
+            if(executeRandomClassroomGroupData == null || executeRandomClassroomGroupData[0].length == 0){
+                console.log(`Error in Fetching Classroom Group Data: ${randomClassroomGroup}`, executeRandomClassroomGroupData);
+                continue;
+            }
+            const classroomId = executeRandomClassroomGroupData[0][0].classroomId;
+            const courseId = executeRandomClassroomGroupData[0][0].courseId;
+            const assignmentId = `AID${(i).toString().padStart(5, '0')}`;
+            const googleFormLink = faker.internet.url();
+            const maximumGrade = faker.number.float({min: 50,max: 100, multipleOf: 10});
+            const query = `insert into Assignment(assignmentId, classGroupId, classroomId, courseId, googleFormLink, maximumGrade) values("${assignmentId}", "${randomClassroomGroup}", "${classroomId}", "${courseId}", "${googleFormLink}", ${maximumGrade});`;
+            mainAssignmentQuery += query;
         }
         const executeAssignmentQuery = await SQLHelper.executeQuery(mainAssignmentQuery);
         if(executeAssignmentQuery == null){
             console.log("Error in Populating Assignment Data", executeAssignmentQuery);
         } else {
             console.log("Assignment Data Populated: ", executeAssignmentQuery);
+        }
+    }
+
+    static async populateGradesData(){
+        var mainGradesQuery = "";
+        const executeAllAssignmentsData: any = await SQLHelper.executeQuery(await SQLHelper.getAllAssignments());
+        if(executeAllAssignmentsData == null || executeAllAssignmentsData[0].length == 0){
+            console.log("Error in Fetching Assignments Data", executeAllAssignmentsData);
+            return;
+        }
+        for(let i=0; i<executeAllAssignmentsData[0].length; i++){
+            const classGroupId = executeAllAssignmentsData[0][i].classGroupId;
+            const classroomId = executeAllAssignmentsData[0][i].classroomId;
+            const courseId = executeAllAssignmentsData[0][i].courseId;
+            const executeAllClassroomGroupUsersData: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomUsersByClassGroupId(classGroupId));
+            if(executeAllClassroomGroupUsersData == null || executeAllClassroomGroupUsersData[0].length == 0){
+                console.log(`Error in Fetching Classroom Group Users Data: ${classGroupId}`, executeAllClassroomGroupUsersData);
+                continue;
+            }
+            for(let j=0; j<executeAllClassroomGroupUsersData[0].length; j++){
+                const userId = executeAllClassroomGroupUsersData[0][j].userId;
+                const grade = faker.number.float({min: 30,max: executeAllAssignmentsData[0][i].maximumGrade, multipleOf: 1});
+                const remarks = faker.lorem.sentence();
+                const sentimentScore = faker.number.int({min: 0, max: 2});
+                const isNotificationSent = faker.datatype.boolean();
+                const assignmentId = executeAllAssignmentsData[0][i].assignmentId;
+                const query = `insert into Grades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) values("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
+                mainGradesQuery += query;
+            }
+        }
+        const executeGradesQuery = await SQLHelper.executeQuery(mainGradesQuery);
+        if(executeGradesQuery == null){
+            console.log("Error in Populating Grades Data", executeGradesQuery);
+        } else {
+            console.log("Grades Data Populated: ", executeGradesQuery);
         }
     }
 }

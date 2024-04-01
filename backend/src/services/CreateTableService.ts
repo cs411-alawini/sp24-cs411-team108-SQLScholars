@@ -59,6 +59,8 @@ class CreateTableService{
         await PopulateDataService.populateClassroomGroupData();
         await PopulateDataService.populateClassroomUserData();
         await PopulateDataService.populateAttendanceData();
+        await PopulateDataService.populateAssignmentData();
+        await PopulateDataService.populateGradesData();
     }
 }
 export default CreateTableService;

@@ -28,5 +28,16 @@ class SQLHelper{
             return `SELECT classroomId FROM ClassroomUsers where userId = "${userId}" LIMIT ${LIMIT};`;
         }
     }
+
+    static getClassroomGroupById(classroomId){
+        return `SELECT * FROM ClassroomGroups where classGroupId = "${classroomId}";`;
+    }
+    static getAllAssignments(){
+        return `SELECT * FROM Assignment;`;
+    }
+
+    static getClassroomUsersByClassGroupId(classroomId: String){
+        return `SELECT * FROM ClassroomUsers where classGroupId = "${classroomId}";`;
+    }
 }
 export default SQLHelper;

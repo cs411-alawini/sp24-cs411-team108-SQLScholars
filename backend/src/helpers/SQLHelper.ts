@@ -39,5 +39,27 @@ class SQLHelper{
     static getClassroomUsersByClassGroupId(classroomId: String){
         return `SELECT * FROM ClassroomUsers where classGroupId = "${classroomId}";`;
     }
+
+    static createUserQuery(userId, firstName, lastName, email, password, userType, address, dob){
+        return `INSERT INTO Users(userId, firstName, lastName, email, password, userType, address, dob) VALUES("${userId}", "${firstName}", "${lastName}", "${email}", "${password}", "${userType}", "${address}", "${dob}");`;
+    
+    }
+    static getStudentCount(userType){
+        return `SELECT COUNT(*) as count FROM Users where userType = "${userType}";`;
+    }
+    static getUserById(userId){
+        return `SELECT * FROM Users where userId = "${userId}";`;
+    }
+    static editUserQuery(userId, updateFields){
+        let updateFieldsString = "";
+        for (const key in updateFields) {
+            updateFieldsString += `${key} = "${updateFields[key]}", `;
+        }
+        updateFieldsString = updateFieldsString.slice(0, -2); // Remove the last comma
+        return `UPDATE Users SET ${updateFieldsString} WHERE userId = "${userId}";`;
+    }
+    static searchUserQuery(searchString, userType){
+        return `SELECT * FROM Users where (firstName LIKE "%${searchString}%" OR lastName LIKE "%${searchString}%" OR email LIKE "%${searchString}%") AND userType = ${userType};`;
+    }
 }
 export default SQLHelper;

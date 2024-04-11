@@ -12,10 +12,10 @@ class AuthRouter{
     postRoutes(){
         this.router.post("/signup", UserController.signupUser);
         this.router.post("/login", UserController.loginUser);
-        this.router.post("/search", UserController.searchInUsers);
     }
     getRoutes(){
         this.router.get("/getProfile", UserController.getUserProfile);
+        this.router.get("/search", UserController.searchInUsers);
     }
     putRoutes(){
         this.router.put("/edit", UserController.editUserDetails);

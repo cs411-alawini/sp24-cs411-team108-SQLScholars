@@ -12,7 +12,7 @@ const submitLogin = (e) => {
     }
     
     
-    fetch('http://34.28.230.12/api/user/signup', {
+    fetch('http://34.28.230.12/api/user/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -23,6 +23,7 @@ const submitLogin = (e) => {
     .then(response => response.json())
     .then(data => {
         console.log(data);
+        alert(data.message);
     })
     .catch(error => {
         console.error(error);

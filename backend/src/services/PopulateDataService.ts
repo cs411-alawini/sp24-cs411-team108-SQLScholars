@@ -96,7 +96,7 @@ class PopulateDataService{
         for(let i=0; i<144; i++){
             const classroomId = `CLID${i.toString().padStart(5, '0')}`;
             const className = classroomNames[i];
-            const createdAt =new Date().toISOString().slice(0, 19).replace('T', ' ');;
+            const createdAt =new Date().toISOString().slice(0, 19).replace('T', ' ');
             const query = `insert into Classrooms(classroomId, className, createdAt) values("${classroomId}", "${className}", "${createdAt}");`;
             mainClassroomQuery += query;
         }

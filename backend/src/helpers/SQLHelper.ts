@@ -5,6 +5,7 @@ class SQLHelper{
 
     static async executeQuery(query: string){
         try{
+            console.log("Query to be executed", query);
             const response = await sqlPool.query(query);
             return response;
         } catch(error){
@@ -61,5 +62,39 @@ class SQLHelper{
     static searchUserQuery(searchString, userType){
         return `SELECT * FROM Users where (firstName LIKE "%${searchString}%" OR lastName LIKE "%${searchString}%" OR email LIKE "%${searchString}%") AND userType = ${userType};`;
     }
+    
+    static getClassrooms(count: boolean, LIMIT: number = 1){
+        if(count){
+            return `SELECT COUNT(*) as count FROM Classrooms;`;
+        }
+        return `SELECT * FROM Classrooms LIMIT ${LIMIT};`;
+    }
+    static createClassroomQuery(classroomId, className, createdAt){
+        return `INSERT INTO Classrooms(classroomId, className, createdAt) VALUES("${classroomId}", "${className}", "${createdAt}");`;
+    }
+    static getClassroomById(classroomId){
+        return `SELECT * FROM Classrooms where classroomId = "${classroomId}";`;
+    }
+
+    static editClassroomQuery(classroomId, className){
+        return `UPDATE Classrooms SET className="${className}" WHERE classroomId = "${classroomId}";`;
+    }
+
+    static getCourses(count: boolean, LIMIT: number = 1){
+        if(count){
+            return `SELECT COUNT(*) as count FROM Courses;`;
+        }
+        return `SELECT * FROM Courses LIMIT ${LIMIT};`;
+    }
+    static createCourseQuery(courseId, subjectName, rating){
+        return `INSERT INTO Courses(courseId, subjectName, rating) VALUES("${courseId}", "${subjectName}", ${rating});`;
+    }
+    static getCourseById(courseId){
+        return `SELECT * FROM Courses where courseId = "${courseId}";`;
+    }
+    static editCourseQuery(courseId, subjectName, rating){
+        return `UPDATE Courses SET subjectName="${subjectName}", rating=${rating} WHERE courseId = "${courseId}";`;
+    }
+
 }
 export default SQLHelper;

@@ -7,6 +7,7 @@ class CourseRouter{
         this.router = Router();
         this.postRoutes();
         this.getRoutes();
+        this.putRoutes();
     }
     postRoutes(){
         this.router.post("/create", CourseController.createCourse);

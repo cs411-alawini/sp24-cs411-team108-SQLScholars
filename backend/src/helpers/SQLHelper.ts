@@ -96,5 +96,37 @@ class SQLHelper{
         return `UPDATE Courses SET subjectName="${subjectName}", rating=${rating} WHERE courseId = "${courseId}";`;
     }
 
+    static getClassroomGroupsForStudent(userId){
+        return `SELECT * FROM ClassroomUsers NATURAL JOIN ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses where userId = "${userId}" order by userJoinedAt DESC;`;
+    }
+
+    static getAllClassroomGroupsForAdmin(){
+        return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by createdAt DESC;`;
+    }
+
+    static getClassroomGroupsByClassroomIdAndCourseId(classroomId, courseId){
+        return `SELECT * FROM ClassroomGroups where classroomId = "${classroomId}" AND courseId = "${courseId}";`;
+    }
+
+    static getClassroomGroupCount(){
+        return `SELECT COUNT(*) as count FROM ClassroomGroups;`;
+    }
+    static createClassroomGroup(classGroupId, classroomId, courseId, zoomLink, classStartTimings, classDuration){
+        return `INSERT INTO ClassroomGroups(classGroupId, classroomId, courseId, zoomLink, classStartTimings, classDuration) VALUES("${classGroupId}", "${classroomId}", "${courseId}", "${zoomLink}", "${classStartTimings}", "${classDuration}");`;
+    }
+    static editClassroomGroup(classGroupId, updateFields){
+        let updateFieldsString = "";
+        for (const key in updateFields) {
+            updateFieldsString += `${key} = "${updateFields[key]}", `;
+        }
+        updateFieldsString = updateFieldsString.slice(0, -2); // Remove the last comma
+        return `UPDATE ClassroomGroups SET ${updateFieldsString} WHERE classGroupId = "${classGroupId}";`;
+    }
+    static checkIfClassroomGroupExistsForUserId(userId, classGroupId){
+        return `SELECT * FROM ClassroomUsers where userId = "${userId}" AND classGroupId = "${classGroupId}";`;
+    }
+    static joinClassroomGroup(userId, classGroupId, classroomId, courseId, userJoinedAt){
+        return `INSERT INTO ClassroomUsers(userId, classGroupId, classroomId, courseId, userJoinedAt) VALUES("${userId}", "${classGroupId}", "${classroomId}", "${courseId}", "${userJoinedAt}");`;
+    }
 }
 export default SQLHelper;

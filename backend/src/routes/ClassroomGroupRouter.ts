@@ -14,7 +14,7 @@ class ClassroomGroupRouter{
         this.router.post("/addRecording", ClassroomGroupController.addClassroomGroupRecordings);
         this.router.post("/deleteRecording", ClassroomGroupController.deleteClassroomGroupRecordings);
 
-        this.router.post("/addStudent", ClassroomGroupController.addClassroomGroupRecordings);
+        this.router.post("/addStudent", ClassroomGroupController.addStudentToClassroomGroup);
         this.router.post("/removeStudent", ClassroomGroupController.removeStudentFromClassroomGroup);
     }
     getRoutes(){

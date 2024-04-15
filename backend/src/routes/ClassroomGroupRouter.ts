@@ -20,6 +20,7 @@ class ClassroomGroupRouter{
     getRoutes(){
         this.router.get("/getAll", ClassroomGroupController.fetchAllClassroomGroupsForUser);
         this.router.get("/getDetails", ClassroomGroupController.fetchClassroomGroupDetails);
+        this.router.get("/getRecordings", ClassroomGroupController.fetchClassroomGroupRecordings);
     }
     putRoutes(){
         this.router.put("/edit", ClassroomGroupController.editClassroomGroups);

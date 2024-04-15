@@ -30,7 +30,7 @@ class ClassroomGroupController{
         if(classroomResponse === null || classroomResponse[0].length === 0){
             return apiResponse("Classroom not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
-        const classroomGroupResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsByClassroomId(classroomId));
+        const classroomGroupResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsByClassroomIdAndCourseId(classroomId, courseId));
         if(classroomGroupResponse[0].length > 0){
             return apiResponse("ClassroomGroup already exists", RESPONSE.HTTP_NOT_FOUND, {classroomGroup: classroomGroupResponse[0][0]}, res);
         }
@@ -114,6 +114,29 @@ class ClassroomGroupController{
     }
 
     static async removeStudentFromClassroomGroup(req, res, next){
+        const userId = req.body.userId;
+        const classGroupId = req.body.classGroupId;
+        const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
+        if(userResponse === null || userResponse[0].length === 0){
+            return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const user = userResponse[0][0];
+        if(user.userType !== USER_TYPES.student){
+            return apiResponse("Only students are allowed to join groups", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
+        }
+        const classroomGroupResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupById(classGroupId));
+        if(classroomGroupResponse === null || classroomGroupResponse[0].length === 0){
+            return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const classroomGroup = classroomGroupResponse[0][0];
+        const classroomGroupCheckResponse: any = await SQLHelper.executeQuery(await SQLHelper.checkIfClassroomGroupExistsForUserId(userId, classGroupId));
+        if(classroomGroupCheckResponse[0].length === 0){
+            return apiResponse("Student not present in the ClassroomGroup", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const classroomUsersDeleteResponse: any = await SQLHelper.executeQuery(await SQLHelper.leaveClassroomGroup(userId, classGroupId));
+        if(classroomUsersDeleteResponse === null){
+            return apiResponse("Error in removing Student from ClassroomGroup", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
+        }
         return apiResponse("ClassroomGroup Student Removed", RESPONSE.HTTP_OK, {}, res);
     }
 
@@ -149,20 +172,111 @@ class ClassroomGroupController{
     }
 
     static async fetchClassroomGroupDetails(req, res, next){
-        return apiResponse("ClassroomGroup Details Fetched", RESPONSE.HTTP_OK, {}, res);
+        const classGroupId = req.query.classGroupId;
+        const classroomGroupResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsByClassgroupId(classGroupId));
+        if(classroomGroupResponse === null || classroomGroupResponse[0].length === 0){
+            return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const classroomGroup = classroomGroupResponse[0][0];
+        return apiResponse("ClassroomGroup Details Fetched", RESPONSE.HTTP_OK, {classroomGroup}, res);
     }
 
 
     static async addClassroomGroupRecordings(req, res, next){
+        const userId = req.body.userId;
+        const classGroupId = req.body.classGroupId;
+        const recordingLink = req.body.recordingLink;
+        const classDate = req.body.classDate;
+        const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
+        if(userResponse === null || userResponse[0].length === 0){
+            return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const user = userResponse[0][0];
+        if(user.userType !== USER_TYPES.teacher){
+            return apiResponse("Only teachers are allowed to add recordings", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
+        }
+        const classroomGroupResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupById(classGroupId));
+        if(classroomGroupResponse === null || classroomGroupResponse[0].length === 0){
+            return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const classroomGroup = classroomGroupResponse[0][0];
+        const classroomGroupRecordingCountResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingCount(classGroupId));
+        const recordingCount = classroomGroupRecordingCountResponse[0][0].count;
+        const recordingId = `CRID${recordingCount.toString().padStart(5, '0')}`;
+        if(recordingLink === null || recordingLink === "" || classDate === null || classDate === ""){
+            return apiResponse("Please provide all the required details", RESPONSE.HTTP_BAD_REQUEST, {}, res);
+        }
+        const classroomGroupRecordingInsertResponse: any = await SQLHelper.executeQuery(await SQLHelper.addClassroomGroupRecording(recordingId, classGroupId, classroomGroup.classroomId, classroomGroup.courseId, classDate, recordingLink));
+        if(classroomGroupRecordingInsertResponse === null){
+            return apiResponse("Error in adding recording", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
+        }
         return apiResponse("ClassroomGroup Recording Added", RESPONSE.HTTP_CREATED, {}, res);
     }
 
     static async editClassroomGroupRecordings(req, res, next){
+        const userId = req.body.userId;
+        const recordingId = req.body.recordingId;
+        const recordingLink = req.body.recordingLink;
+        const classDate = req.body.classDate;
+        const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
+        if(userResponse === null || userResponse[0].length === 0){
+            return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const user = userResponse[0][0];
+        if(user.userType !== USER_TYPES.teacher){
+            return apiResponse("Only teachers are allowed to edit recordings", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
+        }
+        const classroomGroupRecordingResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingById(recordingId));
+        if(classroomGroupRecordingResponse === null || classroomGroupRecordingResponse[0].length === 0){
+            return apiResponse("ClassroomGroup Recording not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        if(recordingLink === null && classDate === null){
+            return apiResponse("Please provide at least recordingLink or classDate to edit", RESPONSE.HTTP_BAD_REQUEST, {}, res);
+        }
+        const updateFields: any = {};
+        if(recordingLink){
+            updateFields.recordingLink = recordingLink;
+        }
+        if(classDate){
+            updateFields.classDate = classDate;
+        }
+        const classroomGroupRecordingUpdateResponse: any = await SQLHelper.executeQuery(await SQLHelper.editClassroomGroupRecording(recordingId, updateFields));
+        if(classroomGroupRecordingUpdateResponse === null){
+            return apiResponse("Error in editing ClassroomGroup Recording", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
+        }
         return apiResponse("ClassroomGroup Recording Edited", RESPONSE.HTTP_OK, {}, res);
     }
 
     static async deleteClassroomGroupRecordings(req, res, next){
+        const userId = req.body.userId;
+        const recordingId = req.body.recordingId;
+        const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
+        if(userResponse === null || userResponse[0].length === 0){
+            return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const user = userResponse[0][0];
+        if(user.userType !== USER_TYPES.teacher){
+            return apiResponse("Only teachers are allowed to delete recordings", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
+        }
+        const classroomGroupRecordingResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingById(recordingId));
+        if(classroomGroupRecordingResponse === null || classroomGroupRecordingResponse[0].length === 0){
+            return apiResponse("ClassroomGroup Recording not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const classroomGroupRecordingDeleteResponse: any = await SQLHelper.executeQuery(await SQLHelper.deleteClassroomGroupRecording(recordingId));
+        if(classroomGroupRecordingDeleteResponse === null){
+            return apiResponse("Error in deleting ClassroomGroup Recording", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
+        }
         return apiResponse("ClassroomGroup Recording Deleted", RESPONSE.HTTP_OK, {}, res);
+    }
+
+    static async fetchClassroomGroupRecordings(req, res, next){
+        const classGroupId = req.query.classGroupId;
+        const classroomGroupRecordingResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingsByClassgroupId(classGroupId));
+        if(classroomGroupRecordingResponse === null || classroomGroupRecordingResponse[0].length === 0){
+            return apiResponse("ClassroomGroup Recording not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const classroomGroupRecordings = classroomGroupRecordingResponse[0];
+        return apiResponse("ClassroomGroup Recordings Fetched", RESPONSE.HTTP_OK, {classroomGroupRecordings}, res);
     }
 }
 export default ClassroomGroupController;

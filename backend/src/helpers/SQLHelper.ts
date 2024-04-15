@@ -108,6 +108,9 @@ class SQLHelper{
         return `SELECT * FROM ClassroomGroups where classroomId = "${classroomId}" AND courseId = "${courseId}";`;
     }
 
+    static getClassroomGroupsByClassgroupId(classGroupId){
+        return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses where classGroupId = "${classGroupId}";`;
+    }
     static getClassroomGroupCount(){
         return `SELECT COUNT(*) as count FROM ClassroomGroups;`;
     }
@@ -128,5 +131,32 @@ class SQLHelper{
     static joinClassroomGroup(userId, classGroupId, classroomId, courseId, userJoinedAt){
         return `INSERT INTO ClassroomUsers(userId, classGroupId, classroomId, courseId, userJoinedAt) VALUES("${userId}", "${classGroupId}", "${classroomId}", "${courseId}", "${userJoinedAt}");`;
     }
+    static getClassroomGroupRecordingCount(classGroupId){
+        return `SELECT COUNT(*) as count FROM ClassGroupRecordings where classGroupId = "${classGroupId}";`;
+    }
+    static addClassroomGroupRecording(recordingId, classGroupId, classroomId, courseId, classDate, recordingLink){
+        return `INSERT INTO ClassGroupRecordings(recordingId, classGroupId, classroomId, courseId, classDate, recordingLink) VALUES("${recordingId}", "${classGroupId}", "${classroomId}", "${courseId}", "${classDate}", "${recordingLink}");`;
+    }
+    static getClassroomGroupRecordingById(recordingId){
+        return `SELECT * FROM ClassGroupRecordings where recordingId = "${recordingId}";`;
+    }
+    static editClassroomGroupRecording(recordingId, updateFields){
+        let updateFieldsString = "";
+        for (const key in updateFields) {
+            updateFieldsString += `${key} = "${updateFields[key]}", `;
+        }
+        updateFieldsString = updateFieldsString.slice(0, -2); // Remove the last comma
+        return `UPDATE ClassGroupRecordings SET ${updateFieldsString} WHERE recordingId = "${recordingId}";`;
+    }
+    static deleteClassroomGroupRecording(recordingId){
+        return `DELETE FROM ClassGroupRecordings WHERE recordingId = "${recordingId}";`;
+    }
+    static leaveClassroomGroup(userId, classGroupId){
+        return `DELETE FROM ClassroomUsers WHERE userId = "${userId}" AND classGroupId = "${classGroupId}";`;
+    }
+    static getClassroomGroupRecordingsByClassgroupId(classGroupId){
+        return `SELECT * FROM ClassGroupRecordings where classGroupId = "${classGroupId}";`;
+    }
+
 }
 export default SQLHelper;

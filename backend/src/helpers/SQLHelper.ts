@@ -157,6 +157,45 @@ class SQLHelper{
     static getClassroomGroupRecordingsByClassgroupId(classGroupId){
         return `SELECT * FROM ClassGroupRecordings where classGroupId = "${classGroupId}";`;
     }
+    static createAssignment(assignmentId, classGroupId, classroomId, courseId, googleFormLink, maximumGrade){
+        return `INSERT INTO Assignment(assignmentId, classGroupId, classroomId, courseId, googleFormLink, maximumGrade) VALUES("${assignmentId}", "${classGroupId}", "${classroomId}", "${courseId}", "${googleFormLink}", ${maximumGrade});`;
+    }
+    static getAllAssignmentsCount(){
+        return `SELECT COUNT(*) as count FROM Assignment;`;
+    }
+    static getAssignmentById(assignmentId){
+        return `SELECT * FROM Assignment where assignmentId = "${assignmentId}";`;
+    }
+    static getAssignmentsByClassGroupId(classGroupId){
+        return `SELECT * FROM Assignment where classGroupId = "${classGroupId}";`;
+    }
+    static deleteAssignment(assignmentId){
+        return `DELETE FROM Assignment WHERE assignmentId = "${assignmentId}";`;
+    }
+    static editAssignment(assignmentId, updateFields){
+        let updateFieldsString = "";
+        for (const key in updateFields) {
+            updateFieldsString += `${key} = "${updateFields[key]}", `;
+        }
+        updateFieldsString = updateFieldsString.slice(0, -2); // Remove the last comma
+        return `UPDATE Assignment SET ${updateFieldsString} WHERE assignmentId = "${assignmentId}";`;
+    }
+    static getAssignmentGradeByAssignmentIdAndUserId(assignmentId, userId){
+        return `SELECT * FROM AssignmentGrades where assignmentId = "${assignmentId}" AND userId = "${userId}";`;
+    }
+    static createAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent){
+        return `INSERT INTO AssignmentGrades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
+    }
 
+    static createAttendance(userId, classroomId, isPresent, attendanceDate, isParentsNotified){
+        return `INSERT INTO Attendance(studentId, classroomId, isPresent, attendanceDate, isParentsNotified) VALUES("${userId}", "${classroomId}", ${isPresent}, "${attendanceDate}", ${isParentsNotified});`;
+    }
+    static getAttendanceForClassroom(classroomId){
+        return `SELECT * FROM Attendance where classroomId = "${classroomId}";`;
+    }
+    static editAttendance(userId, classroomId, attendanceDate, isPresent){
+
+        return `UPDATE Attendance SET isPresent=${isPresent} WHERE studentId = "${userId}" AND classroomId = "${classroomId}" AND attendanceDate = "${attendanceDate}";`;
+    }
 }
 export default SQLHelper;

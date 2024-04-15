@@ -1,0 +1,107 @@
+.login_background {
+  background-size: cover; /* Scale the background image to cover the entire container */
+  height: 100vh; /* Set the height of the container to 100% of the viewport height */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start; /* Center the items horizontally */
+}
+
+.top-bar {
+  background-color: #1E3877;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 9%;
+  align-items: center; /* Align items at the start (top) of the container */
+  justify-content: flex-start; /* Center the items horizontally */
+}
+
+.logo {
+  height: 76%;
+  padding-left: 2%;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+.cms-title {
+  padding-left: 6%;
+  font-size: 23px;
+  line-height: 1; /* Set line-height to normal */
+  margin: 0;
+  color: #FFFF;
+}
+
+.cms-desc {
+  font-size: 12px;
+  padding-left: 2%;
+  color: #FFFF;
+}
+
+.login {
+  text-align: center;
+  width: 40%;
+  margin-left: 60%;
+  height: 100%;
+  background-color: #FFFF;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 30%;
+}
+
+.login-header {
+  margin-top: 30%;
+  margin-bottom: 12%;
+}
+
+.email-input {
+  font-size: 22px;
+  height: 20%;
+  width: 80%;
+  margin-bottom: 6%;
+}
+
+.password-input {
+  font-size: 22px;
+  height: 20%;
+  width: 80%;
+  margin-bottom: 10%;
+}
+
+.login-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #1E3877; /* Blue color */
+  color: #fff; /* White text color */
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.signup-redirect {
+  font-size: 16px;
+  display: inline-block;
+  background-color: transparent; /* Blue color */
+  color: #1E3877; 
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}

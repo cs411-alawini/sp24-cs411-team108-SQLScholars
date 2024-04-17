@@ -194,8 +194,16 @@ class SQLHelper{
         return `SELECT * FROM Attendance where classroomId = "${classroomId}";`;
     }
     static editAttendance(userId, classroomId, attendanceDate, isPresent){
-
         return `UPDATE Attendance SET isPresent=${isPresent} WHERE studentId = "${userId}" AND classroomId = "${classroomId}" AND attendanceDate = "${attendanceDate}";`;
+    }
+    static getStudentsWithIsParentNotifiedFalse(){
+        return `SELECT * FROM Attendance where isParentsNotified = false;`;
+    }
+    static getParentsByStudentId(studentId){
+        return `SELECT * FROM Users where studentIds LIKE "%${studentId}%";`;
+    }
+    static updateAttendanceAfterNotification(studentId, attendanceDate){
+        return `UPDATE Attendance SET isParentsNotified = true WHERE studentId = "${studentId}" AND attendanceDate = "${attendanceDate}";`;
     }
 }
 export default SQLHelper;

@@ -205,5 +205,11 @@ class SQLHelper{
     static updateAttendanceAfterNotification(studentId, attendanceDate){
         return `UPDATE Attendance SET isParentsNotified = true WHERE studentId = "${studentId}" AND attendanceDate = "${attendanceDate}";`;
     }
+    static getUsersGradeNotification(){
+        return `SELECT * FROM Grades where isNotificationSent = false;`;
+    }
+    static updateGradeNotification(userId, assignmentId){
+        return `UPDATE Grades SET isNotificationSent = true WHERE userId = "${userId}" AND assignmentId = "${assignmentId}";`;
+    }
 }
 export default SQLHelper;

@@ -10,5 +10,14 @@ class Schedule{
             await NotificationService.sendAttendanceNotification();
         });
     }
+
+    static async gradeServiceSchedule(){
+        console.log('Grade service scheduled');
+        
+        schedule.scheduleJob('0 16 * * *', async function(){
+            console.log('Grade service running');
+            await NotificationService.sendEmailForGrades();
+        });
+    }
 }
 export default Schedule;

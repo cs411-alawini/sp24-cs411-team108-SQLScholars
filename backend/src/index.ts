@@ -42,4 +42,5 @@ app.use("/api/attendance", AttendanceRouter);
 app.listen(process.env.PORT, async ()=>{
     console.log("Server connected to port", process.env.PORT);
     await Schedule.attendanceServiceSchedule();
+    await Schedule.gradeServiceSchedule();
 });

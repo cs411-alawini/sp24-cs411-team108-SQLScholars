@@ -100,6 +100,13 @@ class SQLHelper{
         return `SELECT * FROM ClassroomUsers NATURAL JOIN ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses where userId = "${userId}" order by userJoinedAt DESC;`;
     }
 
+    static getClassroomGroupsForParentsChild(userId){
+        return `select co.subjectName as subjectName, cr.className as className, cg.classGroupId as classGroupId, a.assignmentId as assignmentId, g.grade as grade, maxGrade.topperGrade as topperGrade, a.maximumGrade as maximumPossibleGrade from ClassroomUsers cu NATURAL JOIN ClassroomGroups cg NATURAL JOIN Courses co NATURAL JOIN Classrooms cr NATURAL JOIN Assignment a NATURAL JOIN Grades g JOIN (select assignmentId, max(grade) as topperGrade from Grades group by assignmentId) as maxGrade ON g.assignmentId = maxGrade.assignmentId where cu.userId="${userId}";`;
+    }
+    
+    static getAttendanceForStudent(userId){
+        return `SELECT * FROM Attendance where studentId = "${userId}";`;
+    }
     static getAllClassroomGroupsForAdmin(){
         return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by createdAt DESC;`;
     }

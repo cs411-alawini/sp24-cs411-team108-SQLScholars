@@ -163,12 +163,51 @@ class ClassroomGroupController{
             const userIds = user.studentIds.split(";");
             for(var i = 0; i < userIds.length; i++){
                 const classroomGroupsResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsForStudent(userIds[i]));
-                if(classroomGroupsResponse[0].length > 0){
-                    classroomGroups.push(...classroomGroupsResponse[0]);
+                for(const classroomGroup of classroomGroupsResponse[0]){
+                    classroomGroup.userId = userIds[i];
+                    classroomGroups.push(classroomGroup);
                 }
             }
         }
         return apiResponse("ClassroomGroups Fetched", RESPONSE.HTTP_OK, {classroomGroups}, res);
+    }
+
+    static async fetchStudentsAnalyticsForParents(req, res, next){
+        const userId = req.query.userId;
+        const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
+        if(userResponse === null || userResponse[0].length === 0){
+            return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const user = userResponse[0][0];
+        if(user.userType !== USER_TYPES.parent){
+            return apiResponse("Only parents are allowed to fetch student data", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
+        }
+        var data = [];
+        
+        const userIds = user.studentIds.split(";");
+        if(userIds.length === 0){
+            return apiResponse("No Student linked to the Parent", RESPONSE.HTTP_OK, {data}, res);
+        }
+        for(var i = 0; i < userIds.length; i++){
+            data[i] = {
+                assignmentGrades: [],
+                attendance: [],
+                userData: {}
+            };
+            const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userIds[i]));
+            if(userResponse[0].length > 0){
+                data[i].userData = userResponse[0][0];
+            }
+            const assignmentGradesResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsForParentsChild(userIds[i]));
+            if(assignmentGradesResponse[0].length > 0){
+                data[i].assignmentGrades = assignmentGradesResponse[0];
+            }
+            const attendanceResponse: any = await SQLHelper.executeQuery(await SQLHelper.getAttendanceForStudent(userIds[i]));
+            if(attendanceResponse[0].length > 0){
+                data[i].attendance = attendanceResponse[0];
+            }
+        }
+        return apiResponse("Student Analytics Fetched", RESPONSE.HTTP_OK, data, res);
     }
 
     static async fetchClassroomGroupDetails(req, res, next){

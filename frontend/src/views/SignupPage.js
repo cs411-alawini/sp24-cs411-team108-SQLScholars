@@ -61,11 +61,20 @@ const submitSignup = (e, navigate, selectedOption) => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
-        alert(data.message);
-        if (data.status == 200) {
-            localStorage.setItem('userData', JSON.stringify(data));
-            navigate('/home');
+        if (data.status == 201) {
+            const user = data.data.user;
+            localStorage.setItem('userData', JSON.stringify(user));
+            if(user.userType == 0){
+                navigate('/homeAdmin');
+            } else if(user.userType == 1){
+                navigate('/homeStudent');
+            } else if(user.userType == 2){
+                navigate('/homeTeacher');
+            } else if(user.userType == 3){
+                navigate('/homeParent');
+            } else {
+                navigate('/homeStudent');
+            }
         }
     })
     .catch(error => {

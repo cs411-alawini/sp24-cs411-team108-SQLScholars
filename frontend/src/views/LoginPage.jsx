@@ -28,10 +28,24 @@ const submitLogin = (e, navigate) => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
-        alert(data.message);
-        localStorage.setItem('userData', JSON.stringify(data));
-        navigate('/home');
+        if(data.status == 200){
+            const user = data.data.user;
+            localStorage.setItem('userData', JSON.stringify(user));
+            if(user.userType == 0){
+                navigate('/homeAdmin');
+            } else if(user.userType == 1){
+                navigate('/homeStudent');
+            } else if(user.userType == 2){
+                navigate('/homeTeacher');
+            } else if(user.userType == 3){
+                navigate('/homeParent');
+            } else {
+                navigate('/homeStudent');
+            }
+        } else {
+            alert(data.message);
+        }
+        
     })
     .catch(error => {
         console.error(error);

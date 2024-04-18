@@ -63,8 +63,10 @@ const submitSignup = (e, navigate, selectedOption) => {
     .then(data => {
         console.log(data);
         alert(data.message);
-        localStorage.setItem('userData', JSON.stringify(data));
-        navigate('/home');
+        if (data.status == 200) {
+            localStorage.setItem('userData', JSON.stringify(data));
+            navigate('/home');
+        }
     })
     .catch(error => {
         console.error(error);

@@ -78,9 +78,9 @@ const SignUp = () => {
     const selectType = (event) => {
         setSelectedOption(event.target.value);
     };
-    const navigate = useNavigate(); // Move the hook call inside the component function
+    const navigate = useNavigate();
     const navigateToLogin = () => {
-        navigate("/login"); // Navigate to the signup page
+        navigate("/login"); 
     }
     return (
         <div className="signup-background" style={{ backgroundImage:`url(${image})`,backgroundRepeat:"no-repeat"}}>

@@ -4,10 +4,9 @@ import image from "../img/landing_page.png"
 import "../css/LandingPage.css"
 
 const LandingPage = () => {
-    const navigate = useNavigate(); // Move the hook call inside the component function
+    const navigate = useNavigate();
 
     const handleClick = () => {
-        // Redirect to login
         navigate('/login');
     }
 

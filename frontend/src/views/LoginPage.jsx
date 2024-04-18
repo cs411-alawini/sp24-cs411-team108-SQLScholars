@@ -39,9 +39,9 @@ const submitLogin = (e, navigate) => {
 }
 
 const LoginPage = () =>{
-    const navigate = useNavigate(); // Move the hook call inside the component function
+    const navigate = useNavigate();
     const navigateToSignup = () => {
-        navigate("/signup"); // Navigate to the signup page
+        navigate("/signup");
     }
     
     return (

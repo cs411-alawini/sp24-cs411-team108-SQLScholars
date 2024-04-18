@@ -1,11 +1,11 @@
 .background {
-  background-size: cover; /* Scale the background image to cover the entire container */
-  background-position: center; /* Center the background image */
-  height: 100vh; /* Set the height of the container to 100% of the viewport height */
+  background-size: cover; 
+  background-position: center; 
+  height: 100vh; 
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
+  justify-content: center; 
+  align-items: center; 
 }
 
 .landing-title {
@@ -24,8 +24,8 @@
 .start-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #1E3877; /* Blue color */
-  color: #fff; /* White text color */
+  background-color: #1E3877; 
+  color: #fff; 
   border: none;
   border-radius: 5px;
   font-size: 16px;

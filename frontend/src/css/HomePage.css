@@ -65,7 +65,15 @@
     width: 300px; /* Adjust width as necessary */
     border-radius: 8px; /* Rounded corners for the modal */
   }
+  .modal h2 {
+    margin-top: 0;
+    text-align: center;
+  }
   
+  .modal button {
+    margin-top: 10px;
+    margin-left: 35%;
+  }
   .overlay {
     position: fixed;
     top: 0;

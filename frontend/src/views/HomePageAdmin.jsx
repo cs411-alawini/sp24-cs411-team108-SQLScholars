@@ -20,6 +20,7 @@ const CourseCard = ({ course }) => {
         </div>
         <div className="card-body">
           <h4>{course.subjectName}</h4>
+          <p>Class: {course.className}</p>
           <p>Starts at: {course.classStartTimings}</p>
           <p>Duration: {course.classDuration} hours</p>
           <p>Rating: {course.rating}</p>
@@ -33,16 +34,17 @@ const CourseCard = ({ course }) => {
             overlayClassName="overlay"
           >
             <h2>Class Toppers</h2>
-            <button onClick={closeModal}>Close</button>
             {toppers.length > 0 ? (
               <ul>
                 {toppers.map((topper, index) => (
-                  <li key={index}>{topper.name} - {topper.grade}</li>
+                  <li key={index}>{topper.topperFirstName} {topper.topperLastName} - Grade: {topper.topperAverage}</li>
                 ))}
               </ul>
             ) : (
               <p>No toppers available.</p>
             )}
+            <button onClick={closeModal}>Close</button>
+
           </Modal>
         </div>
       </div>

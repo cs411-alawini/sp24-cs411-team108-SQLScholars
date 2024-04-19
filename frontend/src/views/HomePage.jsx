@@ -4,8 +4,8 @@ import "../css/HomePage.css";
 
 const CourseCard = ({ course }) => {
   // Format the start time and date
-//   const startTime = new Date(course.classStartTimings).toLocaleTimeString();
-//   const startDate = new Date(course.classStartTimings).toLocaleDateString();
+  const startTime = new Date(course.classStartTimings).toLocaleTimeString();
+  const startDate = new Date(course.classStartTimings).toLocaleDateString();
 
   return (
     <div className="course-card">
@@ -15,7 +15,8 @@ const CourseCard = ({ course }) => {
       </div>
       <div className="card-body">
         <h4>{course.subjectName}</h4>
-        <p>Starts at: {course.classStartTimings}</p>
+        <p>Class: {course.className}</p>
+        <p>Starts on: {startDate} at {startTime}</p>
         <p>Duration: {course.classDuration} hours</p>
         <p>Rating: {course.rating}</p>
         <a href={course.zoomLink}>Join Class</a>
@@ -24,7 +25,7 @@ const CourseCard = ({ course }) => {
   );
 };
 
-const HomePageStudent = () => {
+const HomePage = () => {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -71,4 +72,4 @@ const HomePageStudent = () => {
   );
 };
 
-export default HomePageStudent;
+export default HomePage;

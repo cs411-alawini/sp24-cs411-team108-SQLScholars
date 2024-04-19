@@ -1,0 +1,47 @@
+.app {
+    text-align: center;
+  }
+  
+  .app-header {
+    background-color: #1E3877;
+    min-height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    padding: 0 20px;
+  }
+  
+  .courses-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .course-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .card-header {
+    background-color: #f5f5f5;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .card-header img {
+    height: 50px;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+  
+  /* Add additional styling for buttons, inputs, and other elements */
+  

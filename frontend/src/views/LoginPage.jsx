@@ -74,7 +74,7 @@ const LoginPage = () =>{
                     <input type="password" name="password" placeholder="Password" className="password-input" />
                     <button type="submit" className="login-button">Login</button>
                 </form>
-                <div>Don't have an account? <button className="signup-redirect" onClick={navigateToSignup}>Sign Up</button></div>
+                <div><p className="dont-have-account">Don't have an account?<button className="signup-redirect" onClick={navigateToSignup}>Sign Up</button></p> </div>
             </div>
         </div>
     )

@@ -117,7 +117,9 @@ class SQLHelper{
     static getAllClassroomGroupsForAdmin(){
         return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by createdAt DESC;`;
     }
-
+    static getClassroomGroupToppers(){
+        return `select u.userId as topperUserId, u.firstName AS topperFirstName, u.lastName AS topperLastName, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a NATURAL JOIN Grades g NATURAL JOIN Users u group by g.classGroupId, u.userId having (g.classGroupId, topperAverage) IN (select g.classGroupId, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a JOIN Grades g on a.assignmentId=g.assignmentId group by g.classGroupId) order by g.classGroupId;`;
+    }
     static getClassroomGroupsByClassroomIdAndCourseId(classroomId, courseId){
         return `SELECT * FROM ClassroomGroups where classroomId = "${classroomId}" AND courseId = "${courseId}";`;
     }

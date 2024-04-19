@@ -143,7 +143,7 @@ class ClassroomGroupController{
     static async fetchAllClassroomGroupsForUser(req, res, next){
         const userId = req.query.userId;
         const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
-        if(userResponse === null || userResponse.length === 0){
+        if(userResponse === null || userResponse[0].length === 0){
             return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
         const user = userResponse[0][0];
@@ -153,14 +153,25 @@ class ClassroomGroupController{
             const classroomGroupsResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsForStudent(userId));
             classroomGroups = classroomGroupsResponse[0];
         } else if(user.userType === USER_TYPES.admin){
-            const classroomGroupsResponse = await SQLHelper.executeQuery(await SQLHelper.getAllClassroomGroupsForAdmin());
-            classroomGroups = classroomGroupsResponse[0];
+            classroomGroups = [];
+            const classroomGroupsResponse: any = await SQLHelper.executeQuery(await SQLHelper.getAllClassroomGroupsForAdmin());
+            const classroomGroupTopperResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupToppers());
+            const classroomGroupToppers = classroomGroupTopperResponse[0];
+            for(const classroomGroup of classroomGroupsResponse[0]){
+                classroomGroup.classToppers = [];
+                for(const topper of classroomGroupToppers){
+                    if(classroomGroup.classGroupId === topper.classGroupId){
+                        classroomGroup.classToppers.push(topper);
+                    }
+                }
+                classroomGroups.push(classroomGroup);
+            }
         } else if(user.userType === USER_TYPES.parent){
             classroomGroups = [];
-            if(user.studentIds === null || user.studentIds === ""){
-                return apiResponse("No Student linked to the Parent", RESPONSE.HTTP_OK, {classroomGroups: []}, res);
-            }
             const userIds = user.studentIds.split(";");
+            if(userIds.length === 0){
+                return apiResponse("No Student linked to the Parent", RESPONSE.HTTP_OK, {classroomGroups}, res);
+            }
             for(var i = 0; i < userIds.length; i++){
                 const classroomGroupsResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsForStudent(userIds[i]));
                 for(const classroomGroup of classroomGroupsResponse[0]){

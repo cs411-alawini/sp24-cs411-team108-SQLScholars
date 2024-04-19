@@ -212,14 +212,29 @@ class ClassroomGroupController{
 
     static async fetchClassroomGroupDetails(req, res, next){
         const classGroupId = req.query.classGroupId;
+        const userId = req.query.userId;
+        const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
+        if(userResponse === null || userResponse[0].length === 0){
+            return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const user = userResponse[0][0];
         const classroomGroupResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsByClassgroupId(classGroupId));
         if(classroomGroupResponse === null || classroomGroupResponse[0].length === 0){
             return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
         const classroomGroup = classroomGroupResponse[0][0];
+        const classroomGroupUsersResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupUsersByClassGroupId(classGroupId));
+        classroomGroup.users = classroomGroupUsersResponse[0];
+        if(user.userType === USER_TYPES.admin){
+            const starStudentResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupUsersForAdminsWithStarStudent(classGroupId));
+            const starStudents = [];
+            for(const starStudent of starStudentResponse[0]){
+                starStudents.push(starStudent.userId);
+            }
+            classroomGroup.starStudents = starStudents;
+        } 
         return apiResponse("ClassroomGroup Details Fetched", RESPONSE.HTTP_OK, {classroomGroup}, res);
     }
-
 
     static async addClassroomGroupRecordings(req, res, next){
         const userId = req.body.userId;

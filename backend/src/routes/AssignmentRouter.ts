@@ -14,7 +14,6 @@ class AssignmentRouter{
         this.router.post("/create", AssignmentController.createGroupAssignment);
         this.router.post("/delete", AssignmentController.deleteGroupAssignment);
         this.router.put("/addGrade", AssignmentController.addAssignmentGrade);
-
     }
     getRoutes(){
         this.router.get("/getAssignments", AssignmentController.fetchGroupAssignment);

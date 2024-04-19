@@ -1,31 +1,38 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
+import Modal from 'react-modal';
 
 const CourseCard = ({ course }) => {
-  // Format the start time and date
-//   const startTime = new Date(course.classStartTimings).toLocaleTimeString();
-//   const startDate = new Date(course.classStartTimings).toLocaleDateString();
-
-  return (
-    <div className="course-card">
-      <div className="card-header">
-        <img src={logo} alt="University Logo" />
-        <h3>University of Illinois at Urbana-Champaign</h3>
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+  
+    const openModal = () => setModalIsOpen(true);
+    const closeModal = () => setModalIsOpen(false);
+  
+    // Ensure classToppers is an array, default to empty if undefined
+    const toppers = course.classToppers || [];
+  
+    return (
+      <div className="course-card">
+        <div className="card-header">
+          <img src={logo} alt="University Logo" />
+          <h3>University of Illinois at Urbana-Champaign</h3>
+        </div>
+        <div className="card-body">
+          <h4>{course.subjectName}</h4>
+          <p>Class: {course.className}</p>
+          <p>{course.classroomGroups}</p>
+          <p>Starts at: {course.classStartTimings}</p>
+          <p>Duration: {course.classDuration} hours</p>
+          {/* <p>Rating: {course.rating}</p> */}
+          <button onClick={() => window.open(course.zoomLink, '_blank', 'noopener,noreferrer')}>Join Class</button>
+        </div>
       </div>
-      <div className="card-body">
-        <h4>{course.subjectName}</h4>
-        <p>Class: {course.className}</p>
-        <p>Starts at: {course.classStartTimings}</p>
-        <p>Duration: {course.classDuration} hours</p>
-        <p>Rating: {course.rating}</p>
-        <a href={course.zoomLink}>Join Class</a>
-      </div>
-    </div>
-  );
-};
+    );
+  };
+    
 
-const HomePageTeacher = () => {
+const HomePageStudent = () => {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -72,4 +79,4 @@ const HomePageTeacher = () => {
   );
 };
 
-export default HomePageTeacher;
+export default HomePageStudent;

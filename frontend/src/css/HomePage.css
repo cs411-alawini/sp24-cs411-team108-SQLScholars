@@ -100,7 +100,11 @@
   button:last-child {
     margin-right: 0; /* Remove right margin for the last button */
   }
-  
+
+  .logout-button{
+    background-color: red;
+    width: 100px;
+  }
   
   button:hover {
     background-color: #0056b3; /* Darker blue on hover */

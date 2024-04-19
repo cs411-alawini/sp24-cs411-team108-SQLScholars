@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
-import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 const CourseCard = ({ course }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -33,6 +33,7 @@ const CourseCard = ({ course }) => {
     
 
 const HomePageStudent = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -64,11 +65,18 @@ const HomePageStudent = () => {
     fetchCourses();
   }, []);
 
+  const logoutUser = () => {
+        localStorage.removeItem('userData');
+        window.location.href = '/login';
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <input type="search" placeholder="Search for Classroom..." />
-        <button type="button">Create Classroom</button>
+        <div className="container">
+          <button type="button" className="logout-button" onClick={logoutUser}>Logout</button>
+        </div>
       </header>
       <div className="courses-container">
         {courses.map((course, index) => (

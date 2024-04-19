@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
-import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 const CourseCard = ({ course }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -22,7 +22,6 @@ const CourseCard = ({ course }) => {
           <h4>{course.subjectName}</h4>
           <p>Starts at: {course.classStartTimings}</p>
           <p>Duration: {course.classDuration} hours</p>
-          {/* <p>Rating: {course.rating}</p> */}
           <button onClick={() => window.open(course.zoomLink, '_blank', 'noopener,noreferrer')}>Join Class</button>
         </div>  
       </div>
@@ -32,7 +31,7 @@ const CourseCard = ({ course }) => {
 
 const HomePageStudent = () => {
   const [courses, setCourses] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
 
     const userData = localStorage.getItem('userData');
@@ -62,11 +61,18 @@ const HomePageStudent = () => {
     fetchCourses();
   }, []);
 
+  const logoutUser = () => {
+    localStorage.removeItem('userData');
+    navigate('/login');
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <input type="search" placeholder="Search for Classroom..." />
-        <button type="button">Create Classroom</button>
+        <div className="container">
+          <button type="button" className="logout-button" onClick={logoutUser}>Logout</button>
+        </div>
       </header>
       <div className="courses-container">
         {courses.map((course, index) => (

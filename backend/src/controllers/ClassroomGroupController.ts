@@ -48,6 +48,30 @@ class ClassroomGroupController{
         return apiResponse("Course added in Classroom", RESPONSE.HTTP_CREATED, {}, res);
     }
 
+    static deleteClassroomGroup(req, res, next){
+        const userId = req.body.userId;
+        const classGroupId = req.body.classGroupId;
+        const userResponse: any = SQLHelper.executeQuery(SQLHelper.getUserById(userId));
+        if(userResponse === null || userResponse[0].length === 0){
+            return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const user = userResponse[0][0];
+        if(user.userType !== USER_TYPES.admin){
+            return apiResponse("Only admins are allowed to delete groups", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
+        }
+        const classroomGroupResponse: any = SQLHelper.executeQuery(SQLHelper.getClassroomGroupById(classGroupId));
+        if(classroomGroupResponse === null || classroomGroupResponse[0].length === 0){
+            return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
+        }
+        const classroomGroup = classroomGroupResponse[0][0];
+        const classroomGroupDeleteResponse: any = SQLHelper.executeQuery(SQLHelper.deleteClassroomGroup(classGroupId, classroomGroup.classroomId, classroomGroup.courseId));
+        if(classroomGroupDeleteResponse === null){
+            return apiResponse("Error in deleting ClassroomGroup", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
+        }
+        
+        return apiResponse("ClassroomGroup Deleted Successfully", RESPONSE.HTTP_OK, {}, res);
+    }
+
     static async editClassroomGroups(req, res, next){
         const userId = req.body.userId;
         const classGroupId = req.body.classGroupId;

@@ -227,5 +227,9 @@ class SQLHelper{
     static updateGradeNotification(userId, assignmentId){
         return `UPDATE Grades SET isNotificationSent = true WHERE userId = "${userId}" AND assignmentId = "${assignmentId}";`;
     }
+    static deleteClassroomGroup(classGroupId, classroomId, courseId){
+        return `CALL DeleteClassroomGroup("${classGroupId}", "${classroomId}", "${courseId}");`;
+    }
+    
 }
 export default SQLHelper;

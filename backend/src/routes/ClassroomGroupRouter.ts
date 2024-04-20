@@ -11,6 +11,7 @@ class ClassroomGroupRouter{
     }
     postRoutes(){
         this.router.post("/create", ClassroomGroupController.linkCourseToClassroom);
+        this.router.post("/delete", ClassroomGroupController.deleteClassroomGroup);
         this.router.post("/addRecording", ClassroomGroupController.addClassroomGroupRecordings);
         this.router.post("/deleteRecording", ClassroomGroupController.deleteClassroomGroupRecordings);
 

@@ -9,12 +9,16 @@ const CourseCard = ({ course }) => {
   
     const openModal = () => setModalIsOpen(true);
     const closeModal = () => setModalIsOpen(false);
-  
+    const navigate = useNavigate();
     // Ensure classToppers is an array, default to empty if undefined
     const toppers = course.classToppers || [];
-  
+    const handleCardClick = () => {
+      navigate(
+        `/classGroupview?classGroupId=${course.classGroupId}&classroomId=${course.classroomId}`
+      );
+    };
     return (
-      <div className="course-card">
+      <div className="course-card" onClick={handleCardClick}>
         <div className="card-header">
           <img src={logo} alt="University Logo" />
           <h3>University of Illinois at Urbana-Champaign</h3>
@@ -25,6 +29,7 @@ const CourseCard = ({ course }) => {
           <p>Starts at: {course.classStartTimings}</p>
           <p>Duration: {course.classDuration} hours</p>
           <p>Rating: {course.rating}</p>
+          
           <button onClick={() => window.open(course.zoomLink, '_blank', 'noopener,noreferrer')}>Join Class</button>
           <button onClick={openModal}>View Toppers</button>
           <Modal

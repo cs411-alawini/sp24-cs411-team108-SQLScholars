@@ -9,7 +9,6 @@ const CourseCard = ({ course }) => {
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
   const handleCardClick = () => {
-    console.log("Classgroup is:", course.classroomGroups);
     navigate(
       `/classGroupview?classGroupId=${course.classGroupId}&classroomId=${course.classroomId}`
     );

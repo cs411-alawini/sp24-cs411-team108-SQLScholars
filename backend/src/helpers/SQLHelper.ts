@@ -37,8 +37,8 @@ class SQLHelper{
         return `SELECT * FROM Assignment;`;
     }
 
-    static getClassroomUsersByClassGroupId(classroomId: String){
-        return `SELECT * FROM ClassroomUsers where classGroupId = "${classroomId}";`;
+    static getClassroomUsersByClassGroupId(classGroupId: String){
+        return `SELECT * FROM ClassroomUsers where classGroupId = "${classGroupId}";`;
     }
 
     static createUserQuery(userId, firstName, lastName, email, password, userType, address, dob){
@@ -100,10 +100,26 @@ class SQLHelper{
         return `SELECT * FROM ClassroomUsers NATURAL JOIN ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses where userId = "${userId}" order by userJoinedAt DESC;`;
     }
 
+    static getClassroomGroupUsersByClassGroupId(classGroupId){
+        return `SELECT * FROM ClassroomUsers NATURAL JOIN Users where classGroupId = "${classGroupId}";`;
+    }
+
+    static getClassroomGroupUsersForAdminsWithStarStudent(classGroupId){
+        return `select DISTINCT g.classGroupId, g.userId from Grades g JOIN Assignment a on g.assignmentId = a.assignmentId and g.classroomId IN (select a.classroomId from Attendance a group by classroomId, studentId having sum(a.isPresent) >=(select avg(totalAttendance) from (select classroomId, studentId, sum(isPresent) as totalAttendance from Attendance as a1 group by classroomId, studentId) as maxAttendance where maxAttendance.classroomId = a.classroomId) order by a.classroomId) group by g.classGroupId, g.userId having avg(g.grade/a.maximumGrade*100)>=(select avg(g1.grade/a1.maximumGrade*100) from Grades g1 JOIN Assignment a1 on g1.assignmentId = a1.assignmentId where g1.classGroupId = g.classGroupId) and g.classGroupId="${classGroupId}" order by g.classGroupId;`
+    }
+    static getClassroomGroupsForParentsChild(userId){
+        return `select co.subjectName as subjectName, cr.className as className, cg.classGroupId as classGroupId, a.assignmentId as assignmentId, g.grade as grade, maxGrade.topperGrade as topperGrade, a.maximumGrade as maximumPossibleGrade from ClassroomUsers cu NATURAL JOIN ClassroomGroups cg NATURAL JOIN Courses co NATURAL JOIN Classrooms cr NATURAL JOIN Assignment a NATURAL JOIN Grades g JOIN (select assignmentId, max(grade) as topperGrade from Grades group by assignmentId) as maxGrade ON g.assignmentId = maxGrade.assignmentId where cu.userId="${userId}";`;
+    }
+    
+    static getAttendanceForStudent(userId){
+        return `SELECT * FROM Attendance where studentId = "${userId}";`;
+    }
     static getAllClassroomGroupsForAdmin(){
         return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by createdAt DESC;`;
     }
-
+    static getClassroomGroupToppers(){
+        return `select g.classGroupId, u.userId as topperUserId, u.firstName AS topperFirstName, u.lastName AS topperLastName, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a NATURAL JOIN Grades g NATURAL JOIN Users u group by g.classGroupId, u.userId having (g.classGroupId, topperAverage) IN (select g.classGroupId, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a JOIN Grades g on a.assignmentId=g.assignmentId group by g.classGroupId) order by g.classGroupId;`;
+    }
     static getClassroomGroupsByClassroomIdAndCourseId(classroomId, courseId){
         return `SELECT * FROM ClassroomGroups where classroomId = "${classroomId}" AND courseId = "${courseId}";`;
     }
@@ -167,7 +183,7 @@ class SQLHelper{
         return `SELECT * FROM Assignment where assignmentId = "${assignmentId}";`;
     }
     static getAssignmentsByClassGroupId(classGroupId){
-        return `SELECT * FROM Assignment where classGroupId = "${classGroupId}";`;
+        return `select a.assignmentId as assignmentId, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a NATURAL JOIN Grades g where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade;`;
     }
     static deleteAssignment(assignmentId){
         return `DELETE FROM Assignment WHERE assignmentId = "${assignmentId}";`;
@@ -193,6 +209,10 @@ class SQLHelper{
     static getAttendanceForClassroom(classroomId){
         return `SELECT * FROM Attendance where classroomId = "${classroomId}";`;
     }
+
+    static getAttendanceForClassroomAndUser(classroomId, userId){
+        return `SELECT * FROM Attendance where classroomId = "${classroomId}" AND studentId = "${userId}";`;
+    }
     static editAttendance(userId, classroomId, attendanceDate, isPresent){
         return `UPDATE Attendance SET isPresent=${isPresent} WHERE studentId = "${userId}" AND classroomId = "${classroomId}" AND attendanceDate = "${attendanceDate}";`;
     }
@@ -211,5 +231,9 @@ class SQLHelper{
     static updateGradeNotification(userId, assignmentId){
         return `UPDATE Grades SET isNotificationSent = true WHERE userId = "${userId}" AND assignmentId = "${assignmentId}";`;
     }
+    static deleteClassroomGroup(classGroupId, classroomId, courseId){
+        return `CALL DeleteClassroomGroup("${classGroupId}", "${classroomId}", "${courseId}");`;
+    }
+    
 }
 export default SQLHelper;

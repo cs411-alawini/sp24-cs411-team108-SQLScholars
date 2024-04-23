@@ -1,46 +1,57 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const CourseCard = ({ course }) => {
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-  
-    const openModal = () => setModalIsOpen(true);
-    const closeModal = () => setModalIsOpen(false);
-  
-    // Ensure classToppers is an array, default to empty if undefined
-    const toppers = course.classToppers || [];
-  
-    return (
-      <div className="course-card">
-        <div className="card-header">
-          <img src={logo} alt="University Logo" />
-          <h3>University of Illinois at Urbana-Champaign</h3>
-        </div>
-        <div className="card-body">
-          <h4>{course.subjectName}</h4>
-          <p>Class: {course.className}</p>
-          <p>{course.classroomGroups}</p>
-          <p>Starts at: {course.classStartTimings}</p>
-          <p>Duration: {course.classDuration} hours</p>
-          {/* <p>Rating: {course.rating}</p> */}
-          <button onClick={() => window.open(course.zoomLink, '_blank', 'noopener,noreferrer')}>Join Class</button>
-        </div>
-      </div>
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
+  const handleCardClick = () => {
+    console.log("Classgroup is:", course.classroomGroups);
+    navigate(
+      `/classGroupview?classGroupId=${course.classGroupId}&classroomId=${course.classroomId}`
     );
   };
-    
+
+  // Ensure classToppers is an array, default to empty if undefined
+  const toppers = course.classToppers || [];
+
+  return (
+    <div className="course-card" onClick={handleCardClick}>
+      <div className="card-header">
+        <img src={logo} alt="University Logo" />
+        <h3>University of Illinois at Urbana-Champaign</h3>
+      </div>
+      <div className="card-body">
+        <h4>{course.subjectName}</h4>
+        <p>Class: {course.className}</p>
+        <p>{course.classroomGroups}</p>
+        <p>Starts at: {course.classStartTimings}</p>
+        <p>Duration: {course.classDuration} hours</p>
+        {/* <p>Rating: {course.rating}</p> */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open(course.zoomLink, "_blank", "noopener,noreferrer");
+          }}
+        >
+          Join Class
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const HomePageStudent = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-
-    const userData = localStorage.getItem('userData');
-    if(!userData){
-      console.error('User data not found in local storage');
+    const userData = localStorage.getItem("userData");
+    if (!userData) {
+      console.error("User data not found in local storage");
       return;
     }
     console.log(JSON.parse(userData));
@@ -51,7 +62,9 @@ const HomePageStudent = () => {
 
     const fetchCourses = async () => {
       try {
-        const response = await fetch(`http://34.28.230.12/api/classroomgroup/getAll?userId=${userId}`);
+        const response = await fetch(
+          `http://34.28.230.12/api/classroomgroup/getAll?userId=${userId}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -66,16 +79,18 @@ const HomePageStudent = () => {
   }, []);
 
   const logoutUser = () => {
-        localStorage.removeItem('userData');
-        window.location.href = '/login';
-  }
+    localStorage.removeItem("userData");
+    window.location.href = "/login";
+  };
 
   return (
     <div className="app">
       <header className="app-header">
         <input type="search" placeholder="Search for Classroom..." />
         <div className="container">
-          <button type="button" className="logout-button" onClick={logoutUser}>Logout</button>
+          <button type="button" className="logout-button" onClick={logoutUser}>
+            Logout
+          </button>
         </div>
       </header>
       <div className="courses-container">

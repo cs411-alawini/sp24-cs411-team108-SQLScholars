@@ -70,9 +70,9 @@ function ClassGroupView() {
       path: `/assignmentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
-      id: "classroom",
-      label: "Classroom",
-      path: `/classroomView?classGroupId=${cgId}&classroomId=${crId}`,
+      id: "student",
+      label: "Students",
+      path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
       id: "grades",

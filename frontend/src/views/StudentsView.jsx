@@ -3,7 +3,7 @@ import logo from "../img/illini_logo.png";
 import "../css/Hamburger.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-const ClassroomView = () => {
+const StudentView = () => {
   const [userType, setUserId] = useState(null);
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
@@ -40,9 +40,9 @@ const ClassroomView = () => {
       path: `/assignmentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
-      id: "classroom",
-      label: "Classroom",
-      path: `/classroomView?classGroupId=${cgId}&classroomId=${crId}`,
+      id: "student",
+      label: "Students",
+      path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
       id: "grades",
@@ -83,10 +83,10 @@ const ClassroomView = () => {
       )}
       <div className="content">
         <div>
-          <h1>Classroom View</h1>
+          <h1>Students View</h1>
         </div>
       </div>
     </div>
   );
 };
-export default ClassroomView;
+export default StudentView;

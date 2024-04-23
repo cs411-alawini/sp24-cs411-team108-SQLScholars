@@ -209,6 +209,10 @@ class SQLHelper{
     static getAttendanceForClassroom(classroomId){
         return `SELECT * FROM Attendance where classroomId = "${classroomId}";`;
     }
+
+    static getAttendanceForClassroomAndUser(classroomId, userId){
+        return `SELECT * FROM Attendance where classroomId = "${classroomId}" AND studentId = "${userId}";`;
+    }
     static editAttendance(userId, classroomId, attendanceDate, isPresent){
         return `UPDATE Attendance SET isPresent=${isPresent} WHERE studentId = "${userId}" AND classroomId = "${classroomId}" AND attendanceDate = "${attendanceDate}";`;
     }

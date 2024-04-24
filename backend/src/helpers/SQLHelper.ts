@@ -186,7 +186,7 @@ class SQLHelper{
         return `select a.assignmentId as assignmentId, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a NATURAL JOIN Grades g where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade;`;
     }
     static deleteAssignment(assignmentId){
-        return `DELETE FROM Assignment WHERE assignmentId = "${assignmentId}";`;
+        return `CALL DeleteAssignmentAndGrades("${assignmentId}");`;
     }
     static editAssignment(assignmentId, updateFields){
         let updateFieldsString = "";
@@ -207,7 +207,7 @@ class SQLHelper{
         return `INSERT INTO Attendance(studentId, classroomId, isPresent, attendanceDate, isParentsNotified) VALUES("${userId}", "${classroomId}", ${isPresent}, "${attendanceDate}", ${isParentsNotified});`;
     }
     static getAttendanceForClassroom(classroomId){
-        return `SELECT * FROM Attendance where classroomId = "${classroomId}";`;
+        return `SELECT * FROM Attendance where classroomId = "${classroomId}" order by attendanceDate DESC;`;
     }
 
     static getAttendanceForClassroomAndUser(classroomId, userId){

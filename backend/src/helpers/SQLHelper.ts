@@ -207,11 +207,11 @@ class SQLHelper{
         return `INSERT INTO Attendance(studentId, classroomId, isPresent, attendanceDate, isParentsNotified) VALUES("${userId}", "${classroomId}", ${isPresent}, "${attendanceDate}", ${isParentsNotified});`;
     }
     static getAttendanceForClassroom(classroomId){
-        return `SELECT * FROM Attendance where classroomId = "${classroomId}" order by attendanceDate DESC;`;
+        return `SELECT * FROM Attendance, Users where studentId=userId where classroomId = "${classroomId}" order by attendanceDate DESC;`;
     }
 
     static getAttendanceForClassroomAndUser(classroomId, userId){
-        return `SELECT * FROM Attendance where classroomId = "${classroomId}" AND studentId = "${userId}";`;
+        return `SELECT * FROM Attendance, Users where studentId=userId where classroomId = "${classroomId}" AND studentId = "${userId}";`;
     }
     static editAttendance(userId, classroomId, attendanceDate, isPresent){
         return `UPDATE Attendance SET isPresent=${isPresent} WHERE studentId = "${userId}" AND classroomId = "${classroomId}" AND attendanceDate = "${attendanceDate}";`;

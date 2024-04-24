@@ -9,6 +9,7 @@ import AssignmentRouter from "./routes/AssignmentRouter";
 import AttendanceRouter from "./routes/AttendanceRouter";
 import cors from "cors";
 import Schedule from "./schedules/Schedules";
+import PopulateDataService from "./services/PopulateDataService";
 dotenv.config();
 
 const app = express();
@@ -22,7 +23,7 @@ export const sqlPool = mysql.createPool({
     waitForConnections: true,
 }).promise();
 
-// CreateTableService.createTables();
+// PopulateDataService.populateGradesData();
 app.use(cors({
     origin: true,
     credentials: true

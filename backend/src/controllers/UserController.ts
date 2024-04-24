@@ -21,7 +21,7 @@ class AuthController{
                 return apiResponse("User email already exists", RESPONSE.HTTP_BAD_REQUEST, {email}, res);
             }
             const userCountResponse = await SQLHelper.executeQuery(await SQLHelper.getStudentCount(userType));
-            const userCount = userCountResponse[0][0].count + 1;
+            const userCount = userCountResponse[0][0].count;
             let userId;
             if (userType === USER_TYPES.student) {
                 userId = `UID${userCount.toString().padStart(5, '0')}`;

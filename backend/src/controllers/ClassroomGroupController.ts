@@ -109,7 +109,7 @@ class ClassroomGroupController{
         return apiResponse("ClassroomGroup Edited", RESPONSE.HTTP_OK, {}, res);
     }
 
-    static async addStudentToClassroomGroup(req, res, next){
+    static async addUserToClassroomGroup(req, res, next){
         const userId = req.body.userId;
         const classGroupId = req.body.classGroupId;
         const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
@@ -117,9 +117,6 @@ class ClassroomGroupController{
             return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
         const user = userResponse[0][0];
-        if(user.userType !== USER_TYPES.student){
-            return apiResponse("Only students are allowed to join groups", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
-        }
         const classroomGroupResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupById(classGroupId));
         if(classroomGroupResponse === null || classroomGroupResponse[0].length === 0){
             return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
@@ -127,17 +124,17 @@ class ClassroomGroupController{
         const classroomGroup = classroomGroupResponse[0][0];
         const classroomGroupCheckResponse: any = await SQLHelper.executeQuery(await SQLHelper.checkIfClassroomGroupExistsForUserId(userId, classGroupId));
         if(classroomGroupCheckResponse[0].length > 0){
-            return apiResponse("Student already present in the ClassroomGroup", RESPONSE.HTTP_NOT_FOUND, {classroomGroup: classroomGroupCheckResponse[0][0]}, res);
+            return apiResponse("User already present in the ClassroomGroup", RESPONSE.HTTP_NOT_FOUND, {classroomGroup: classroomGroupCheckResponse[0][0]}, res);
         }
         const userJoinedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
         const classroomUsersCreateResponse: any = await SQLHelper.executeQuery(await SQLHelper.joinClassroomGroup(userId, classGroupId,classroomGroup.classroomId, classroomGroup.courseId, userJoinedAt));
         if(classroomUsersCreateResponse === null){
             return apiResponse("Error in adding Student to ClassroomGroup", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
         }
-        return apiResponse("Student added in the classroomGroup", RESPONSE.HTTP_CREATED, {}, res);
+        return apiResponse("User added in the classroomGroup", RESPONSE.HTTP_CREATED, {}, res);
     }
 
-    static async removeStudentFromClassroomGroup(req, res, next){
+    static async removeUserFromClassroomGroup(req, res, next){
         const userId = req.body.userId;
         const classGroupId = req.body.classGroupId;
         const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userId));
@@ -145,9 +142,6 @@ class ClassroomGroupController{
             return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
         const user = userResponse[0][0];
-        if(user.userType !== USER_TYPES.student){
-            return apiResponse("Only students are allowed to join groups", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
-        }
         const classroomGroupResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupById(classGroupId));
         if(classroomGroupResponse === null || classroomGroupResponse[0].length === 0){
             return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
@@ -155,13 +149,13 @@ class ClassroomGroupController{
         const classroomGroup = classroomGroupResponse[0][0];
         const classroomGroupCheckResponse: any = await SQLHelper.executeQuery(await SQLHelper.checkIfClassroomGroupExistsForUserId(userId, classGroupId));
         if(classroomGroupCheckResponse[0].length === 0){
-            return apiResponse("Student not present in the ClassroomGroup", RESPONSE.HTTP_NOT_FOUND, {}, res);
+            return apiResponse("User not present in the ClassroomGroup", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
         const classroomUsersDeleteResponse: any = await SQLHelper.executeQuery(await SQLHelper.leaveClassroomGroup(userId, classGroupId));
         if(classroomUsersDeleteResponse === null){
-            return apiResponse("Error in removing Student from ClassroomGroup", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
+            return apiResponse("Error in removing User from ClassroomGroup", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
         }
-        return apiResponse("ClassroomGroup Student Removed", RESPONSE.HTTP_OK, {}, res);
+        return apiResponse("ClassroomGroup User Removed", RESPONSE.HTTP_OK, {}, res);
     }
 
     static async fetchAllClassroomGroupsForUser(req, res, next){

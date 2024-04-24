@@ -210,6 +210,9 @@ class SQLHelper{
         return `SELECT * FROM Attendance, Users where studentId=userId AND classroomId = "${classroomId}" order by attendanceDate DESC;`;
     }
 
+    static getStudentsWithLowThresholdAttendance(classroomId, threshold = 60){
+        return `CALL FetchUsersWithLowAttendance("${classroomId}", ${threshold});`;
+    }
     static getAttendanceForClassroomAndUser(classroomId, userId){
         return `SELECT * FROM Attendance, Users where studentId=userId AND classroomId = "${classroomId}" AND studentId = "${userId}";`;
     }

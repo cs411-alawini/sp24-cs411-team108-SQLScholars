@@ -104,10 +104,6 @@ class AssignmentController{
         if (userResponse === null || userResponse[0].length === 0) {
             return apiResponse("User not found", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }
-        const user = userResponse[0][0];
-        if (user.userType !== USER_TYPES.teacher) {
-            return apiResponse("Only teachers can add grades", RESPONSE.HTTP_BAD_REQUEST, {}, res);
-        }
         const assignmentResponse: any = await SQLHelper.executeQuery(SQLHelper.getAssignmentById(assignmentId));
         if (assignmentResponse === null || assignmentResponse[0].length === 0) {
             return apiResponse("Assignment not found", RESPONSE.HTTP_BAD_REQUEST, {}, res);

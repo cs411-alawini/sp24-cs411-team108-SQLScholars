@@ -83,7 +83,7 @@ class AttendanceController{
         }
         const attendance = attendanceResponse[0];
         var lowAttendanceStudents = []
-        if(studentsBelowThreshold !== null){
+        if(studentsBelowThreshold !== undefined){
             lowAttendanceStudents = studentsBelowThreshold[0];
         }
         return apiResponse("Attendance Details for Classroom", RESPONSE.HTTP_OK, {attendance, lowAttendanceStudents}, res);

@@ -29,7 +29,8 @@ class AssignmentController{
         if (assignmentResponse === null) {
             return apiResponse("Error in fetching assignments", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }
-        const assignmentCount = assignmentResponse[0][0].count;
+        const latestAssignmentId = assignmentResponse[0][0].latestAssignmentId;
+        const assignmentCount =  parseInt(latestAssignmentId.slice(3));
         const assignmentId = `AID${(assignmentCount).toString().padStart(5, '0')}`;
         const createAssignmentResponse = await SQLHelper.executeQuery(SQLHelper.createAssignment(assignmentId, classGroupId, classGroup.classroomId, classGroup.courseId, googleFormLink, maximumGrade));
         if (createAssignmentResponse === null) {

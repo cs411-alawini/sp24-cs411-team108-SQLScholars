@@ -177,7 +177,7 @@ class SQLHelper{
         return `INSERT INTO Assignment(assignmentId, classGroupId, classroomId, courseId, googleFormLink, maximumGrade) VALUES("${assignmentId}", "${classGroupId}", "${classroomId}", "${courseId}", "${googleFormLink}", ${maximumGrade});`;
     }
     static getAllAssignmentsCount(){
-        return `SELECT COUNT(*) as count FROM Assignment;`;
+        return `SELECT assignmentId as latestAssignmentId FROM Assignment order by assignmentId DESC LIMIT 1;`;
     }
     static getAssignmentById(assignmentId){
         return `SELECT * FROM Assignment where assignmentId = "${assignmentId}";`;

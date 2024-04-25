@@ -183,7 +183,7 @@ class SQLHelper{
         return `SELECT * FROM Assignment where assignmentId = "${assignmentId}";`;
     }
     static getAssignmentsByClassGroupId(classGroupId){
-        return `select a.assignmentId as assignmentId, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a LEFT JOIN Grades g ON a.assignmentId = g.assignmentId where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade;`;
+        return `select a.assignmentId as assignmentId, a.googleFormLink, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a LEFT JOIN Grades g ON a.assignmentId = g.assignmentId where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade, a.googleFormLink;`;
     }
     static deleteAssignment(assignmentId){
         return `CALL DeleteAssignmentAndGrades("${assignmentId}");`;

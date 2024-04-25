@@ -183,7 +183,7 @@ class SQLHelper{
         return `SELECT * FROM Assignment where assignmentId = "${assignmentId}";`;
     }
     static getAssignmentsByClassGroupId(classGroupId){
-        return `select a.assignmentId as assignmentId, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a NATURAL JOIN Grades g where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade;`;
+        return `select a.assignmentId as assignmentId, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a LEFT JOIN Grades g N a.assignmentId = g.assignmentId where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade;`;
     }
     static deleteAssignment(assignmentId){
         return `CALL DeleteAssignmentAndGrades("${assignmentId}");`;
@@ -197,10 +197,14 @@ class SQLHelper{
         return `UPDATE Assignment SET ${updateFieldsString} WHERE assignmentId = "${assignmentId}";`;
     }
     static getAssignmentGradeByAssignmentIdAndUserId(assignmentId, userId){
-        return `SELECT * FROM AssignmentGrades where assignmentId = "${assignmentId}" AND userId = "${userId}";`;
+        return `SELECT * FROM Grades where assignmentId = "${assignmentId}" AND userId = "${userId}";`;
+    }
+    static getAssignmentGradesByAssignmentId(assignmentId){
+        return `SELECT * FROM Grades where assignmentId = "${assignmentId}";`;
+
     }
     static createAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent){
-        return `INSERT INTO AssignmentGrades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
+        return `INSERT INTO Grades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
     }
 
     static createAttendance(userId, classroomId, isPresent, attendanceDate, isParentsNotified){

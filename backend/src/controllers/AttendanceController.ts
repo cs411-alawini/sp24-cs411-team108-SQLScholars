@@ -82,7 +82,10 @@ class AttendanceController{
             return apiResponse("No attendance details found", RESPONSE.HTTP_OK, {}, res);
         }
         const attendance = attendanceResponse[0];
-        const lowAttendanceStudents = studentsBelowThreshold[0];
+        var lowAttendanceStudents = []
+        if(studentsBelowThreshold !== null){
+            lowAttendanceStudents = studentsBelowThreshold[0];
+        }
         return apiResponse("Attendance Details for Classroom", RESPONSE.HTTP_OK, {attendance, lowAttendanceStudents}, res);
     }
 

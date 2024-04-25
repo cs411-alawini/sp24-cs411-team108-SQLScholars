@@ -56,7 +56,7 @@ class AssignmentController{
         }
         const assignment = assignmentResponse[0][0];
         const deleteAssignmentResponse: any = await SQLHelper.executeQuery(SQLHelper.deleteAssignment(assignmentId));
-        if (deleteAssignmentResponse === null || deleteAssignmentResponse[0].affectedRows === 0) {
+        if (deleteAssignmentResponse === null) {
             return apiResponse("Error in deleting assignment", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }
         return apiResponse("Assignment deleted", RESPONSE.HTTP_OK, {}, res);
@@ -155,7 +155,6 @@ class AssignmentController{
 
                 } else {
                     assignments[i].userGrade = assignmentGradesResponse[0].grade;
-
                 }
             }
         }

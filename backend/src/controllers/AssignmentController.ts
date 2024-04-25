@@ -151,7 +151,12 @@ class AssignmentController{
         if(userId.userType === USER_TYPES.student){
             for(let i=0; i<assignments.length ;i++){
                 const assignmentGradesResponse: any= await SQLHelper.executeQuery(SQLHelper.getAssignmentGradeByAssignmentIdAndUserId(assignments[i].assignmentId, userId));
-                assignments[i].userGrade = assignmentGradesResponse[0].grade;
+                if(assignmentGradesResponse === null || assignmentGradesResponse[0].length === 0){
+
+                } else {
+                    assignments[i].userGrade = assignmentGradesResponse[0].grade;
+
+                }
             }
         }
         return apiResponse("Assignments Fetched", RESPONSE.HTTP_OK, {assignments}, res);

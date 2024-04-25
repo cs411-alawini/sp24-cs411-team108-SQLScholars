@@ -143,18 +143,20 @@ class AssignmentController{
         if(userResponse === null || userResponse[0].length === 0){
             return apiResponse('User not found', RESPONSE.HTTP_BAD_REQUEST, {userId}, res);
         }
+        const user = userResponse[0][0];
         const assignmentsResponse: any = await SQLHelper.executeQuery(SQLHelper.getAssignmentsByClassGroupId(classGroupId));
         if (assignmentsResponse === null) {
             return apiResponse("Error in fetching assignments", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }
         const assignments = assignmentsResponse[0];
-        if(userId.userType === USER_TYPES.student){
+        if(user.userType === USER_TYPES.student){
             for(let i=0; i<assignments.length ;i++){
-                const assignmentGradesResponse: any= await SQLHelper.executeQuery(SQLHelper.getAssignmentGradeByAssignmentIdAndUserId(assignments[i].assignmentId, userId));
+                const assignmentGradesResponse: any= await SQLHelper.executeQuery(SQLHelper.getAssignmentGradeByAssignmentIdAndUserId(assignments[i].assignmentId, user.userId));
                 if(assignmentGradesResponse === null || assignmentGradesResponse[0].length === 0){
 
                 } else {
-                    assignments[i].userGrade = assignmentGradesResponse[0].grade;
+                    console.log(assignmentGradesResponse[0][0].grade);
+                    assignments[i].userGrade = assignmentGradesResponse[0][0].grade;
                 }
             }
         }
@@ -168,13 +170,14 @@ class AssignmentController{
         if(userResponse === null || userResponse[0].length === 0){
             return apiResponse('User not found', RESPONSE.HTTP_BAD_REQUEST, {userId}, res);
         }
+        const user = userResponse[0][0];
         let assignmentGradesResponse: any;
-        if(userId.userType === USER_TYPES.student){
+        if(user.userType === USER_TYPES.student){
             assignmentGradesResponse= await SQLHelper.executeQuery(SQLHelper.getAssignmentGradeByAssignmentIdAndUserId(assignmentId, userId));
         } else {
             assignmentGradesResponse= await SQLHelper.executeQuery(SQLHelper.getAssignmentGradesByAssignmentId(assignmentId));
         }
-        if (assignmentGradesResponse === null || assignmentGradesResponse[0].length === 0) {
+        if (assignmentGradesResponse === null) {
             return apiResponse("Error in fetching assignment grades", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }
         const assignmentGrades = assignmentGradesResponse[0];

@@ -254,7 +254,7 @@ class ClassroomGroupController{
         const classroomGroup = classroomGroupResponse[0][0];
         const classroomGroupUsersResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupUsersByClassGroupId(classGroupId));
         classroomGroup.users = classroomGroupUsersResponse[0];
-        if(user.userType === USER_TYPES.admin){
+        if(user.userType !== USER_TYPES.student){
             const starStudentResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupUsersForAdminsWithStarStudent(classGroupId));
             const starStudents = [];
             for(const starStudent of starStudentResponse[0]){

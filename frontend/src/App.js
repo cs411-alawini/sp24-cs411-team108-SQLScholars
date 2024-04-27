@@ -10,7 +10,7 @@ import ClassGroupView from "./views/ClassGroupView";
 import AssignmentView from "./views/AssignmentView";
 import GradesView from "./views/GradesView";
 import AttendanceView from "./views/AttendanceView";
-import ClassroomView from "./views/ClassroomView";
+import StudentView from "./views/StudentsView";
 
 const App = () => {
   return (
@@ -26,7 +26,7 @@ const App = () => {
         <Route path="/assignmentView" element={<AssignmentView />}></Route>
         <Route path="/gradesView" element={<GradesView />}></Route>
         <Route path="/attendanceView" element={<AttendanceView />}></Route>
-        <Route path="/classroomView" element={<ClassroomView />}></Route>
+        <Route path="/studentView" element={<StudentView />}></Route>
         <Route path="/classGroupView" element={<ClassGroupView />}></Route>
       </Routes>
     </BrowserRouter>

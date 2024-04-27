@@ -60,6 +60,16 @@ function ClassGroupView() {
 
   const options = [
     {
+      id: "home",
+      label: "Home",
+      path: `/homeStudent`,
+    },
+    {
+      id: "classGroup",
+      label: "ClassGroup View",
+      path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
+    },
+    {
       id: "attendance",
       label: "Attendance",
       path: `/attendanceView?classGroupId=${cgId}&classroomId=${crId}`,
@@ -73,11 +83,6 @@ function ClassGroupView() {
       id: "student",
       label: "Students",
       path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
-    },
-    {
-      id: "grades",
-      label: "Grades",
-      path: `/gradesView?classGroupId=${cgId}&classroomId=${crId}`,
     },
   ];
 

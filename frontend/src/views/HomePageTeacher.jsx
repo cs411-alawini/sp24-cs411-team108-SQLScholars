@@ -14,7 +14,6 @@ const CourseCard = ({ course }) => {
     );
   };
 
-  // Ensure classToppers is an array, default to empty if undefined
   const toppers = course.classToppers || [];
 
   return (

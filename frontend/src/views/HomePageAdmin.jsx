@@ -3,12 +3,16 @@ import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
+import settingsbutton from "../img/three-dots.png";
+
 
 const CourseCard = ({ course }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); 
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
+  const toggleMenu = () => setMenuOpen(!menuOpen);
   const navigate = useNavigate();
   // Ensure classToppers is an array, default to empty if undefined
   const toppers = course.classToppers || [];
@@ -17,11 +21,34 @@ const CourseCard = ({ course }) => {
       `/classGroupview?classGroupId=${course.classGroupId}&classroomId=${course.classroomId}`
     );
   };
+
+  const handleEdit = () => {
+    // Add your logic to handle edit
+    navigate(`/editClassGroup/${course.classGroupId}`);
+    setMenuOpen(false); // Close the menu
+  };
+
+  // Function to handle delete
+  const handleDelete = () => {
+    // Add your logic to handle delete
+    console.log('Delete:', course);
+    setMenuOpen(false); // Close the menu
+  };
+
   return (
     <div className="course-card">
       <div className="card-header">
         <img src={logo} alt="University Logo" />
         <h3>University of Illinois at Urbana-Champaign</h3>
+        <button className="menu-button" onClick={toggleMenu}>
+          <img src={settingsbutton} className="three-dots-icon" alt="Menu" />
+        </button>
+        {menuOpen && (
+          <div className="menu-content">
+            <button onClick={handleEdit}>Edit</button>
+            <button onClick={handleDelete}>Delete</button>
+          </div>
+        )}
       </div>
       <div className="card-body">
         <div onClick={handleCardClick}>
@@ -110,7 +137,7 @@ const HomePageAdmin = () => {
       <header className="app-header">
         <input type="search" placeholder="Search for Classroom..." />
         <div className="container">
-          <button type="button" className="create-button">
+          <button type="button" className="create-button" onClick={() => navigate('/createClassroom')}>
             Create Classroom
           </button>
           <button type="button" className="logout-button" onClick={logoutUser}>

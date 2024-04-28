@@ -44,7 +44,7 @@ const GradesView = () => {
       const response = await fetch(
         `http://34.28.230.12/api/assignment/addGrade`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },

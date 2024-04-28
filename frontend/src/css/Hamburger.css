@@ -44,7 +44,7 @@
   transition: left 0.3s;
   z-index: 2;
   padding-top: 10px;
-  padding-top: 90px;
+  padding-top: 80px;
 }
 
 .menu-option {
@@ -91,6 +91,7 @@
 .class-group-table th {
   background-color: #004080;
   color: white;
+  width: 150px;
 }
 
 .class-group-table td {

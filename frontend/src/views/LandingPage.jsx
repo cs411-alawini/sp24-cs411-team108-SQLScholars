@@ -7,7 +7,22 @@ const LandingPage = () => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate('/login');
+        const user = JSON.parse(localStorage.getItem('userData'));
+        if(user){
+            if(user.userType == 0){
+                navigate('/homeAdmin');
+            } else if(user.userType == 2){
+                navigate('/homeStudent');
+            } else if(user.userType == 1){
+                navigate('/homeTeacher');
+            } else if(user.userType == 3){
+                navigate('/homeParent');
+            } else {
+                navigate('/homeStudent');
+            }
+        } else {
+            navigate('/login');
+        }
     }
 
     return (

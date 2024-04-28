@@ -105,7 +105,10 @@ class SQLHelper{
     }
 
     static getClassroomGroupUsersForAdminsWithStarStudent(classGroupId){
-        return `select DISTINCT g.classGroupId, g.userId from Grades g JOIN Assignment a on g.assignmentId = a.assignmentId and g.classroomId IN (select a.classroomId from Attendance a group by classroomId, studentId having sum(a.isPresent) >=(select avg(totalAttendance) from (select classroomId, studentId, sum(isPresent) as totalAttendance from Attendance as a1 group by classroomId, studentId) as maxAttendance where maxAttendance.classroomId = a.classroomId) order by a.classroomId) group by g.classGroupId, g.userId having avg(g.grade/a.maximumGrade*100)>=(select avg(g1.grade/a1.maximumGrade*100) from Grades g1 JOIN Assignment a1 on g1.assignmentId = a1.assignmentId where g1.classGroupId = g.classGroupId) and g.classGroupId="${classGroupId}" order by g.classGroupId;`
+        return `select DISTINCT g.classGroupId, g.userId from Grades g JOIN Assignment a on g.assignmentId = a.assignmentId and g.userId IN (select a.studentId from Attendance a group by classroomId, studentId having sum(a.isPresent) >=(select avg(totalAttendance) from (select classroomId, studentId, sum(isPresent) as totalAttendance from Attendance as a1 group by classroomId, studentId) as maxAttendance where maxAttendance.classroomId = a.classroomId) order by a.classroomId) group by g.classGroupId, g.userId having avg(g.grade/a.maximumGrade*100)>=(select avg(g1.grade/a1.maximumGrade*100) from Grades g1 JOIN Assignment a1 on g1.assignmentId = a1.assignmentId where g1.classGroupId = g.classGroupId) and g.classGroupId="${classGroupId}" order by g.classGroupId;`
+    }
+    static getBelowAverageStudentsForClassroomGroup(classroomId, classGroupId){
+        return `CALL FetchBelowAverageUsersOfClassroomAndClassGroup("${classroomId}", "${classGroupId}", 60);`;
     }
     static getClassroomGroupsForParentsChild(userId){
         return `select co.subjectName as subjectName, cr.className as className, cg.classGroupId as classGroupId, a.assignmentId as assignmentId, g.grade as grade, maxGrade.topperGrade as topperGrade, a.maximumGrade as maximumPossibleGrade from ClassroomUsers cu NATURAL JOIN ClassroomGroups cg NATURAL JOIN Courses co NATURAL JOIN Classrooms cr NATURAL JOIN Assignment a NATURAL JOIN Grades g JOIN (select assignmentId, max(grade) as topperGrade from Grades group by assignmentId) as maxGrade ON g.assignmentId = maxGrade.assignmentId where cu.userId="${userId}";`;
@@ -177,16 +180,16 @@ class SQLHelper{
         return `INSERT INTO Assignment(assignmentId, classGroupId, classroomId, courseId, googleFormLink, maximumGrade) VALUES("${assignmentId}", "${classGroupId}", "${classroomId}", "${courseId}", "${googleFormLink}", ${maximumGrade});`;
     }
     static getAllAssignmentsCount(){
-        return `SELECT COUNT(*) as count FROM Assignment;`;
+        return `SELECT assignmentId as latestAssignmentId FROM Assignment order by assignmentId DESC LIMIT 1;`;
     }
     static getAssignmentById(assignmentId){
         return `SELECT * FROM Assignment where assignmentId = "${assignmentId}";`;
     }
     static getAssignmentsByClassGroupId(classGroupId){
-        return `select a.assignmentId as assignmentId, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a NATURAL JOIN Grades g where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade;`;
+        return `select a.assignmentId as assignmentId, a.googleFormLink, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a LEFT JOIN Grades g ON a.assignmentId = g.assignmentId where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade, a.googleFormLink;`;
     }
     static deleteAssignment(assignmentId){
-        return `DELETE FROM Assignment WHERE assignmentId = "${assignmentId}";`;
+        return `CALL DeleteAssignmentAndGrades("${assignmentId}");`;
     }
     static editAssignment(assignmentId, updateFields){
         let updateFieldsString = "";
@@ -197,21 +200,30 @@ class SQLHelper{
         return `UPDATE Assignment SET ${updateFieldsString} WHERE assignmentId = "${assignmentId}";`;
     }
     static getAssignmentGradeByAssignmentIdAndUserId(assignmentId, userId){
-        return `SELECT * FROM AssignmentGrades where assignmentId = "${assignmentId}" AND userId = "${userId}";`;
+        return `SELECT * FROM Grades where assignmentId = "${assignmentId}" AND userId = "${userId}";`;
+    }
+    static getAssignmentGradesByAssignmentId(assignmentId){
+        return `SELECT * FROM Grades where assignmentId = "${assignmentId}";`;
+
     }
     static createAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent){
-        return `INSERT INTO AssignmentGrades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
+        return `INSERT INTO Grades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
     }
-
+    static editAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks){
+        return `UPDATE Grades SET grade=${grade}, remarks="${remarks}" WHERE assignmentId = "${assignmentId}" AND userId = "${userId}" AND classGroupId = "${classGroupId}" AND classroomId = "${classroomId}" AND courseId = "${courseId}";`;
+    }
     static createAttendance(userId, classroomId, isPresent, attendanceDate, isParentsNotified){
         return `INSERT INTO Attendance(studentId, classroomId, isPresent, attendanceDate, isParentsNotified) VALUES("${userId}", "${classroomId}", ${isPresent}, "${attendanceDate}", ${isParentsNotified});`;
     }
     static getAttendanceForClassroom(classroomId){
-        return `SELECT * FROM Attendance where classroomId = "${classroomId}";`;
+        return `SELECT * FROM Attendance, Users where studentId=userId AND classroomId = "${classroomId}" order by attendanceDate DESC;`;
     }
 
+    static getStudentsWithLowThresholdAttendance(classroomId, threshold = 60){
+        return `CALL FetchUsersWithLowAttendance("${classroomId}", ${threshold});`;
+    }
     static getAttendanceForClassroomAndUser(classroomId, userId){
-        return `SELECT * FROM Attendance where classroomId = "${classroomId}" AND studentId = "${userId}";`;
+        return `SELECT * FROM Attendance, Users where studentId=userId AND classroomId = "${classroomId}" AND studentId = "${userId}";`;
     }
     static editAttendance(userId, classroomId, attendanceDate, isPresent){
         return `UPDATE Attendance SET isPresent=${isPresent} WHERE studentId = "${userId}" AND classroomId = "${classroomId}" AND attendanceDate = "${attendanceDate}";`;

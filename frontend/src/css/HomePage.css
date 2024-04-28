@@ -1,0 +1,143 @@
+.app {
+    text-align: center;
+    font-family: 'Arial', sans-serif; /* Consistent font for the application */
+    background-color: #f4f4f8; /* Light background for the app */
+  }
+  
+  .app-header {
+    background-color: #1E3877;
+    min-height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    padding: 0 20px;
+  }
+  
+  .courses-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .course-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Slightly larger radius for softer corners */
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: white; /* Ensures the card background is white */
+    transition: transform 0.3s; /* Smooth transform on hover */
+  }
+  
+  .course-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+  }
+  
+  .card-header {
+    background-color: #f5f5f5;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .card-header img {
+    height: 50px; /* Ensure the logo has a fixed height */
+  }
+  
+  .card-body {
+    padding: 15px;
+    color: #333; /* Dark grey color for text for better readability */
+  }
+  
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1050;
+    width: 300px; /* Adjust width as necessary */
+    border-radius: 8px; /* Rounded corners for the modal */
+  }
+  .modal h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+  
+  .modal button {
+    margin-top: 10px;
+    margin-left: 35%;
+  }
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1040;
+  }
+  
+  /* Styling for buttons */
+  button {
+    background-color: #007bff; /* Bright blue background for buttons */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px; /* Rounded corners for buttons */
+    cursor: pointer;
+    font-size: 14px; /* Legible font size */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+    margin-right: 10px; /* Add right margin to all buttons except the last one */
+  }
+  
+  button:last-child {
+    margin-right: 0; /* Remove right margin for the last button */
+  }
+
+  .logout-button{
+    background-color: red;
+    width: 100px;
+  }
+  
+  button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  /* Styling for input elements */
+  input[type="search"] {
+    padding: 8px;
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 4px; /* Consistent rounded corners */
+    margin-right: 10px; /* Spacing to the right */
+    width: 200px; /* Consistent width */
+  }
+  
+  @media (max-width: 600px) {
+    .courses-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .course-card,
+    input[type="search"] {
+      width: 90%; /* Full width on smaller screens */
+    }
+  
+    button,
+    input[type="search"] {
+      margin-top: 10px; /* Additional spacing on mobile */
+    }
+  
+    .app-header {
+      flex-direction: column; /* Stack header items vertically on smaller screens */
+      padding: 10px; /* Reduced padding */
+    }
+  }
+  

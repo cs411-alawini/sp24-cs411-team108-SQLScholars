@@ -206,7 +206,9 @@ class SQLHelper{
     static createAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent){
         return `INSERT INTO Grades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
     }
-
+    static editAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks){
+        return `UPDATE Grades SET grade=${grade}, remarks="${remarks}" WHERE assignmentId = "${assignmentId}" AND userId = "${userId}" AND classGroupId = "${classGroupId}" AND classroomId = "${classroomId}" AND courseId = "${courseId}";`;
+    }
     static createAttendance(userId, classroomId, isPresent, attendanceDate, isParentsNotified){
         return `INSERT INTO Attendance(studentId, classroomId, isPresent, attendanceDate, isParentsNotified) VALUES("${userId}", "${classroomId}", ${isPresent}, "${attendanceDate}", ${isParentsNotified});`;
     }

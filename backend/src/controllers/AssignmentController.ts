@@ -129,6 +129,21 @@ class AssignmentController{
     }
 
     static async editAssignmentGrade(req, res, next){
+        const assignmentId = req.body.assignmentId;
+        const userId = req.body.userId;
+        const userResponse: any = await SQLHelper.executeQuery(SQLHelper.getUserById(userId));
+        if (userResponse === null || userResponse[0].length === 0) {
+            return apiResponse("User not found", RESPONSE.HTTP_BAD_REQUEST, {}, res);
+        }
+        const assignmentResponse: any = await SQLHelper.executeQuery(SQLHelper.getAssignmentById(assignmentId));
+        if (assignmentResponse === null || assignmentResponse[0].length === 0) {
+            return apiResponse("Assignment not found", RESPONSE.HTTP_BAD_REQUEST, {}, res);
+        }
+        const assignment = assignmentResponse[0][0];
+        const editAssignmentGradeResponse: any = await SQLHelper.executeQuery(SQLHelper.editAssignmentGrade(assignmentId, userId, assignment.classGroupId, assignment.classroomId, assignment.courseId, req.body.grade, req.body.remarks));
+        if (editAssignmentGradeResponse === null) {
+            return apiResponse("Error in editing assignment grade", RESPONSE.HTTP_BAD_REQUEST, {}, res);
+        }
         return apiResponse("Assignment Grade Edited", RESPONSE.HTTP_OK, {}, res);
     }
 

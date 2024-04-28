@@ -10,14 +10,17 @@ model=load('svm_pipeline.joblib')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json(force=True)
-    text = data['text']
+    text = request.args.get('text')
     print(text)
     txt = pd.Series(text)
     pred = model.predict(txt)
     response = jsonify({'prediction': int(pred[0])})
     return response
 
+@app.route('/', methods=['GET'])
+def predict_get():
+    return 'Hello World'
+
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5000)
 

@@ -1,6 +1,7 @@
 import RESPONSE from "../constants/ResponseConstants";
 import { USER_TYPES } from "../constants/ServerConstants";
 import { apiResponse } from "../helpers/ApiResponse";
+import FetchSentiment from "../helpers/FetchSentiment";
 import SQLHelper from "../helpers/SQLHelper";
 
 class AssignmentController{
@@ -118,8 +119,18 @@ class AssignmentController{
         }
 
         //Check sentimentScore using sentiment analysis
-        const sentimentScore = 0;
-
+        let sentimentScore;
+        try{
+            const response: any= await FetchSentiment.fetchSentiment(remarks)
+            if(response.prediction === undefined){
+                sentimentScore = 1;
+            } else {
+                sentimentScore = response.prediction;
+            }
+        } catch (error){
+            sentimentScore = 1;
+        }
+        
         const assignmentCreateResponse = await SQLHelper.executeQuery(SQLHelper.createAssignmentGrade(assignmentId, userId, assignment.classGroupId, assignment.classroomId, assignment.courseId, grade, remarks, sentimentScore, isNotificationSent));
         if (assignmentCreateResponse === null) {
             return apiResponse("Error in grading assignment", RESPONSE.HTTP_BAD_REQUEST, {}, res);

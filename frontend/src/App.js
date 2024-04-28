@@ -6,6 +6,11 @@ import HomePageAdmin from "./views/HomePageAdmin";
 import HomePageStudent from "./views/HomePageStudent";
 import HomePageTeacher from "./views/HomePageTeacher";
 import HomePageParent from "./views/HomePageParent";
+import ClassGroupView from "./views/ClassGroupView";
+import AssignmentView from "./views/AssignmentView";
+import GradesView from "./views/GradesView";
+import AttendanceView from "./views/AttendanceView";
+import StudentView from "./views/StudentsView";
 
 const App = () => {
   return (
@@ -18,6 +23,11 @@ const App = () => {
         <Route path="/homeStudent" element={<HomePageStudent />}></Route>
         <Route path="/homeTeacher" element={<HomePageTeacher />}></Route>
         <Route path="/homeParent" element={<HomePageParent />}></Route>
+        <Route path="/assignmentView" element={<AssignmentView />}></Route>
+        <Route path="/gradesView" element={<GradesView />}></Route>
+        <Route path="/attendanceView" element={<AttendanceView />}></Route>
+        <Route path="/studentView" element={<StudentView />}></Route>
+        <Route path="/classGroupView" element={<ClassGroupView />}></Route>
       </Routes>
     </BrowserRouter>
   );

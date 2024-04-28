@@ -1,4 +1,5 @@
 import RESPONSE from "../constants/ResponseConstants";
+import { USER_TYPES } from "../constants/ServerConstants";
 import { apiResponse } from "../helpers/ApiResponse";
 import SQLHelper from "../helpers/SQLHelper";
 
@@ -56,7 +57,24 @@ class AttendanceController{
 
     static async getAttendanceForClassroom(req, res, next){
         const classroomId = req.query.classroomId;
-        const attendanceResponse: any = await SQLHelper.executeQuery(SQLHelper.getAttendanceForClassroom(classroomId));
+        const userId = req.query.userId;
+        const userResponse: any = await SQLHelper.executeQuery(SQLHelper.getUserById(userId));
+        if (userResponse === null || userResponse[0].length === 0) {
+            return apiResponse("User not found", RESPONSE.HTTP_BAD_REQUEST, {}, res);
+        }
+        const user = userResponse[0][0];
+        var attendanceResponse: any;
+        var studentsBelowThreshold: any;
+        if(user.userType === USER_TYPES.student){
+            attendanceResponse = await SQLHelper.executeQuery(SQLHelper.getAttendanceForClassroomAndUser(classroomId, userId));
+        } else if(user.userType === USER_TYPES.teacher){
+            attendanceResponse = await SQLHelper.executeQuery(SQLHelper.getAttendanceForClassroom(classroomId));
+        } else if(user.userType === USER_TYPES.admin){
+            attendanceResponse = await SQLHelper.executeQuery(SQLHelper.getAttendanceForClassroom(classroomId));
+            studentsBelowThreshold = await SQLHelper.executeQuery(SQLHelper.getStudentsWithLowThresholdAttendance(classroomId));
+        } else {
+            return apiResponse("UserType not supported", RESPONSE.HTTP_BAD_REQUEST, {}, res);
+        }
         if (attendanceResponse === null) {
             return apiResponse("Error in fetching attendance", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }
@@ -64,7 +82,11 @@ class AttendanceController{
             return apiResponse("No attendance details found", RESPONSE.HTTP_OK, {}, res);
         }
         const attendance = attendanceResponse[0];
-        return apiResponse("Attendance Details for Classroom", RESPONSE.HTTP_OK, {attendance}, res);
+        var lowAttendanceStudents = []
+        if(studentsBelowThreshold !== undefined){
+            lowAttendanceStudents = studentsBelowThreshold[0];
+        }
+        return apiResponse("Attendance Details for Classroom", RESPONSE.HTTP_OK, {attendance, lowAttendanceStudents}, res);
     }
 
     

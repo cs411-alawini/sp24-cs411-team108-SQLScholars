@@ -11,14 +11,16 @@ class ClassroomGroupRouter{
     }
     postRoutes(){
         this.router.post("/create", ClassroomGroupController.linkCourseToClassroom);
+        this.router.post("/delete", ClassroomGroupController.deleteClassroomGroup);
         this.router.post("/addRecording", ClassroomGroupController.addClassroomGroupRecordings);
         this.router.post("/deleteRecording", ClassroomGroupController.deleteClassroomGroupRecordings);
 
-        this.router.post("/addStudent", ClassroomGroupController.addStudentToClassroomGroup);
-        this.router.post("/removeStudent", ClassroomGroupController.removeStudentFromClassroomGroup);
+        this.router.post("/addUser", ClassroomGroupController.addUserToClassroomGroup);
+        this.router.post("/removeUser", ClassroomGroupController.removeUserFromClassroomGroup);
     }
     getRoutes(){
         this.router.get("/getAll", ClassroomGroupController.fetchAllClassroomGroupsForUser);
+        this.router.get("/getStudentAnalytics", ClassroomGroupController.fetchStudentsAnalyticsForParents)
         this.router.get("/getDetails", ClassroomGroupController.fetchClassroomGroupDetails);
         this.router.get("/getRecordings", ClassroomGroupController.fetchClassroomGroupRecordings);
     }

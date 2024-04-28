@@ -117,6 +117,9 @@ class SQLHelper{
     static getAttendanceForStudent(userId){
         return `SELECT * FROM Attendance where studentId = "${userId}";`;
     }
+    static getStudentAnalytics(userId){
+        return `CALL FetchStudentAnalytics("${userId}");`;
+    }
     static getAllClassroomGroupsForAdmin(){
         return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by createdAt DESC;`;
     }

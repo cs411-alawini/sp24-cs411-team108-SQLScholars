@@ -223,18 +223,11 @@ class ClassroomGroupController{
                 attendance: [],
                 userData: {}
             };
-            const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userIds[i]));
-            if(userResponse[0].length > 0){
-                data[i].userData = userResponse[0][0];
-            }
-            const assignmentGradesResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsForParentsChild(userIds[i]));
-            if(assignmentGradesResponse[0].length > 0){
-                data[i].assignmentGrades = assignmentGradesResponse[0];
-            }
-            const attendanceResponse: any = await SQLHelper.executeQuery(await SQLHelper.getAttendanceForStudent(userIds[i]));
-            if(attendanceResponse[0].length > 0){
-                data[i].attendance = attendanceResponse[0];
-            }
+            const studentAnalyticsProcedureResponse: any = await SQLHelper.executeQuery(await SQLHelper.getStudentAnalytics(userIds[i]));
+            console.log("StudentAnalyticsResponse:",studentAnalyticsProcedureResponse[0][0]);
+            data[i].userData = studentAnalyticsProcedureResponse[0][0][0];
+            data[i].assignmentGrades = studentAnalyticsProcedureResponse[0][1];
+            data[i].attendance = studentAnalyticsProcedureResponse[0][2];
         }
         return apiResponse("Student Analytics Fetched", RESPONSE.HTTP_OK, data, res);
     }

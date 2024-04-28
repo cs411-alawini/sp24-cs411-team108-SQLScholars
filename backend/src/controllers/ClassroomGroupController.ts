@@ -260,7 +260,14 @@ class ClassroomGroupController{
             for(const starStudent of starStudentResponse[0]){
                 starStudents.push(starStudent.userId);
             }
+            const belowAverageStudentResponse: any = await SQLHelper.executeQuery(await SQLHelper.getBelowAverageStudentsForClassroomGroup(classroomGroup.classroomId, classGroupId));
+            const belowAverageStudents = [];
+            for(const belowAverageStudent of belowAverageStudentResponse[0][0]){
+                belowAverageStudents.push(belowAverageStudent.userId);
+            }
+            classroomGroup.belowAverageStudents = belowAverageStudents;
             classroomGroup.starStudents = starStudents;
+
         } 
         return apiResponse("ClassroomGroup Details Fetched", RESPONSE.HTTP_OK, {classroomGroup}, res);
     }

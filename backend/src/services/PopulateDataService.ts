@@ -96,7 +96,7 @@ class PopulateDataService{
         for(let i=0; i<144; i++){
             const classroomId = `CLID${i.toString().padStart(5, '0')}`;
             const className = classroomNames[i];
-            const createdAt =new Date().toISOString().slice(0, 19).replace('T', ' ');;
+            const createdAt =new Date().toISOString().slice(0, 19).replace('T', ' ');
             const query = `insert into Classrooms(classroomId, className, createdAt) values("${classroomId}", "${className}", "${createdAt}");`;
             mainClassroomQuery += query;
         }
@@ -133,8 +133,8 @@ class PopulateDataService{
         for(let i=0; i<143; i++){
             const classroomId = `CLID${i.toString().padStart(5, '0')}`;
             for(let j=0; j<8; j++){
-                const classGroupId = `CGID${((i * 6)+j).toString().padStart(5, '0')}`;
-                const courseId = `CID${(((i * 6) + j)%39).toString().padStart(5, '0')}`;
+                const classGroupId = `CGID${((i * 7)+j).toString().padStart(5, '0')}`;
+                const courseId = `CID${(((i * 7) + j)%39).toString().padStart(5, '0')}`;
                 const zoomLink = faker.internet.url();
                 const classStartTimings = faker.date.between({from: '2022-01-01T08:00:00', to: '2022-01-01T15:00:00'}).toISOString().slice(11, 19);
                 const classDuration = faker.number.float({min: 1,max: 3, fractionDigits: 2});

@@ -63,7 +63,7 @@ class SQLHelper{
         return `SELECT * FROM Users where (firstName LIKE "%${searchString}%" OR lastName LIKE "%${searchString}%" OR email LIKE "%${searchString}%") AND userType = ${userType};`;
     }
     
-    static getClassrooms(count: boolean, LIMIT: number = 1){
+    static getClassrooms(count: boolean, LIMIT: number = 10){
         if(count){
             return `SELECT COUNT(*) as count FROM Classrooms;`;
         }
@@ -80,7 +80,7 @@ class SQLHelper{
         return `UPDATE Classrooms SET className="${className}" WHERE classroomId = "${classroomId}";`;
     }
 
-    static getCourses(count: boolean, LIMIT: number = 1){
+    static getCourses(count: boolean, LIMIT: number = 10){
         if(count){
             return `SELECT COUNT(*) as count FROM Courses;`;
         }

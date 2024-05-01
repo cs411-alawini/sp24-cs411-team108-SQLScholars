@@ -62,11 +62,6 @@ function ClassGroupView() {
     {
       id: "home",
       label: "Home",
-      path: `/homeStudent`,
-    },
-    {
-      id: "classGroup",
-      label: "ClassGroup View",
       path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
@@ -96,11 +91,32 @@ function ClassGroupView() {
     navigate(path);
   };
 
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/login");
+  };
+
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img
+          src={logo}
+          alt="Illini Logo"
+          className="logo"
+          onClick={() => navigate("/homeStudent")}
+        />
         <h1 className="student-title">{userType}</h1>
+        <header className="app-header">
+          <div className="container" style={{ marginLeft: "500px" }}>
+            <button
+              type="button"
+              className="logout-button"
+              onClick={logoutUser}
+            >
+              Logout
+            </button>
+          </div>
+        </header>
       </div>
       <button
         className={`hamburger-icon ${isActive ? "active" : ""}`}

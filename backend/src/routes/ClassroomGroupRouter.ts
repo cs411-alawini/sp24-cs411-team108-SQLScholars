@@ -15,8 +15,8 @@ class ClassroomGroupRouter{
         this.router.post("/addRecording", ClassroomGroupController.addClassroomGroupRecordings);
         this.router.post("/deleteRecording", ClassroomGroupController.deleteClassroomGroupRecordings);
 
-        this.router.post("/addStudent", ClassroomGroupController.addStudentToClassroomGroup);
-        this.router.post("/removeStudent", ClassroomGroupController.removeStudentFromClassroomGroup);
+        this.router.post("/addUser", ClassroomGroupController.addUserToClassroomGroup);
+        this.router.post("/removeUser", ClassroomGroupController.removeUserFromClassroomGroup);
     }
     getRoutes(){
         this.router.get("/getAll", ClassroomGroupController.fetchAllClassroomGroupsForUser);

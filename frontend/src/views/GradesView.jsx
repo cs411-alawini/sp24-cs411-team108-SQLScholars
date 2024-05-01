@@ -47,6 +47,7 @@ const GradesView = () => {
     const payload = { userId, assignmentId, grade, remarks };
 
     try {
+      
       const response = await fetch(apiUrl, {
         method,
         headers: {
@@ -124,6 +125,11 @@ const GradesView = () => {
       id: "student",
       label: "Students",
       path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
+    },
+    {
+      id: "recording",
+      label : "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
     },
   ];
 

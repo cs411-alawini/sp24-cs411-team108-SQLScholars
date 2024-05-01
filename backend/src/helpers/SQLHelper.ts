@@ -177,16 +177,16 @@ class SQLHelper{
         return `INSERT INTO Assignment(assignmentId, classGroupId, classroomId, courseId, googleFormLink, maximumGrade) VALUES("${assignmentId}", "${classGroupId}", "${classroomId}", "${courseId}", "${googleFormLink}", ${maximumGrade});`;
     }
     static getAllAssignmentsCount(){
-        return `SELECT COUNT(*) as count FROM Assignment;`;
+        return `SELECT assignmentId as latestAssignmentId FROM Assignment order by assignmentId DESC LIMIT 1;`;
     }
     static getAssignmentById(assignmentId){
         return `SELECT * FROM Assignment where assignmentId = "${assignmentId}";`;
     }
     static getAssignmentsByClassGroupId(classGroupId){
-        return `select a.assignmentId as assignmentId, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a NATURAL JOIN Grades g where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade;`;
+        return `select a.assignmentId as assignmentId, a.googleFormLink, Round(AVG(g.grade), 2) as averageGrade, max(g.grade) as maxStudentScore, a.maximumGrade as maxPossibleGrade from Assignment a LEFT JOIN Grades g ON a.assignmentId = g.assignmentId where a.classGroupId = '${classGroupId}' GROUP BY a.assignmentId, a.maximumGrade, a.googleFormLink;`;
     }
     static deleteAssignment(assignmentId){
-        return `DELETE FROM Assignment WHERE assignmentId = "${assignmentId}";`;
+        return `CALL DeleteAssignmentAndGrades("${assignmentId}");`;
     }
     static editAssignment(assignmentId, updateFields){
         let updateFieldsString = "";
@@ -197,21 +197,28 @@ class SQLHelper{
         return `UPDATE Assignment SET ${updateFieldsString} WHERE assignmentId = "${assignmentId}";`;
     }
     static getAssignmentGradeByAssignmentIdAndUserId(assignmentId, userId){
-        return `SELECT * FROM AssignmentGrades where assignmentId = "${assignmentId}" AND userId = "${userId}";`;
+        return `SELECT * FROM Grades where assignmentId = "${assignmentId}" AND userId = "${userId}";`;
+    }
+    static getAssignmentGradesByAssignmentId(assignmentId){
+        return `SELECT * FROM Grades where assignmentId = "${assignmentId}";`;
+
     }
     static createAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent){
-        return `INSERT INTO AssignmentGrades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
+        return `INSERT INTO Grades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
     }
 
     static createAttendance(userId, classroomId, isPresent, attendanceDate, isParentsNotified){
         return `INSERT INTO Attendance(studentId, classroomId, isPresent, attendanceDate, isParentsNotified) VALUES("${userId}", "${classroomId}", ${isPresent}, "${attendanceDate}", ${isParentsNotified});`;
     }
     static getAttendanceForClassroom(classroomId){
-        return `SELECT * FROM Attendance where classroomId = "${classroomId}";`;
+        return `SELECT * FROM Attendance, Users where studentId=userId AND classroomId = "${classroomId}" order by attendanceDate DESC;`;
     }
 
+    static getStudentsWithLowThresholdAttendance(classroomId, threshold = 60){
+        return `CALL FetchUsersWithLowAttendance("${classroomId}", ${threshold});`;
+    }
     static getAttendanceForClassroomAndUser(classroomId, userId){
-        return `SELECT * FROM Attendance where classroomId = "${classroomId}" AND studentId = "${userId}";`;
+        return `SELECT * FROM Attendance, Users where studentId=userId AND classroomId = "${classroomId}" AND studentId = "${userId}";`;
     }
     static editAttendance(userId, classroomId, attendanceDate, isPresent){
         return `UPDATE Attendance SET isPresent=${isPresent} WHERE studentId = "${userId}" AND classroomId = "${classroomId}" AND attendanceDate = "${attendanceDate}";`;

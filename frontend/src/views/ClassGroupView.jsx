@@ -79,6 +79,11 @@ function ClassGroupView() {
       label: "Students",
       path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
+    {
+      id: "recording",
+      label : "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
+    },
   ];
 
   const handleOptionClick = (path) => {

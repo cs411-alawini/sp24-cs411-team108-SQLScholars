@@ -142,6 +142,7 @@ class AssignmentController{
     static async editAssignmentGrade(req, res, next){
         const assignmentId = req.body.assignmentId;
         const userId = req.body.userId;
+        const remarks = req.body.remarks;
         const userResponse: any = await SQLHelper.executeQuery(SQLHelper.getUserById(userId));
         if (userResponse === null || userResponse[0].length === 0) {
             return apiResponse("User not found", RESPONSE.HTTP_BAD_REQUEST, {}, res);
@@ -150,8 +151,19 @@ class AssignmentController{
         if (assignmentResponse === null || assignmentResponse[0].length === 0) {
             return apiResponse("Assignment not found", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }
+        let sentimentScore;
+        try{
+            const response: any= await FetchSentiment.fetchSentiment(remarks)
+            if(response.prediction === undefined){
+                sentimentScore = 1;
+            } else {
+                sentimentScore = response.prediction;
+            }
+        } catch (error){
+            sentimentScore = 1;
+        }
         const assignment = assignmentResponse[0][0];
-        const editAssignmentGradeResponse: any = await SQLHelper.executeQuery(SQLHelper.editAssignmentGrade(assignmentId, userId, assignment.classGroupId, assignment.classroomId, assignment.courseId, req.body.grade, req.body.remarks));
+        const editAssignmentGradeResponse: any = await SQLHelper.executeQuery(SQLHelper.editAssignmentGrade(assignmentId, userId, assignment.classGroupId, assignment.classroomId, assignment.courseId, req.body.grade,remarks, sentimentScore));
         if (editAssignmentGradeResponse === null) {
             return apiResponse("Error in editing assignment grade", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }

@@ -288,7 +288,7 @@ class ClassroomGroupController{
         }
         const classroomGroup = classroomGroupResponse[0][0];
       
-        const classroomGroupRecordingCountResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingCount(classGroupId));
+        const classroomGroupRecordingCountResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingCount());
         const recordingCount = classroomGroupRecordingCountResponse[0][0].latestRecordingId;
         const recordingId = `CRID${recordingCount.toString().padStart(5, '0')}`;
         if(recordingLink === null || recordingLink === "" || classDate === null || classDate === ""){

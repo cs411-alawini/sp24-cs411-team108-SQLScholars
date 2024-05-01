@@ -93,7 +93,7 @@ const HomePageStudent = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <span style={{fontWeight: "550", fontSize: "20px"}}>Student</span>
-        <div className="container style={{ marginLeft: "75%" }}">
+        <div className="container" style={{ marginLeft: "75%" }}>
           <button type="button" className="logout-button" onClick={logoutUser}>
             Logout
           </button>

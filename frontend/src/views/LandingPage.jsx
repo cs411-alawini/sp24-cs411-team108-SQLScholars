@@ -21,7 +21,7 @@ const LandingPage = () => {
                 navigate('/homeStudent');
             }
         } else {
-            navigate('/login');
+            navigate('/');
         }
     }
 

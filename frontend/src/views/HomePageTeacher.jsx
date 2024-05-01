@@ -82,7 +82,7 @@ const HomePageStudent = () => {
 
   const logoutUser = () => {
     localStorage.removeItem("userData");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return (

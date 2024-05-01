@@ -2,7 +2,7 @@ import React from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import logo from "../img/illini_logo.png";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js'; // Import necessary components
-import { studentData } from './Data_temp.js';
+import { useNavigate } from 'react-router-dom';
 
 // Register the components
 ChartJS.register(
@@ -51,8 +51,14 @@ const prepareChartData = (grades) => {
 };
 
 const prepareAttendanceData = (attendance) => {
+    if(attendance.length === 0) {
+      return {};
+    }
     const presentDays = attendance.filter(item => item.isPresent === 1).length;
     const absentDays = attendance.filter(item => item.isPresent === 0).length;
+    if(presentDays === 0 && absentDays === 0) {
+      return {};
+    }
     return {
       labels: ['Present', 'Absent'],
       datasets: [{
@@ -74,7 +80,6 @@ const prepareAttendanceData = (attendance) => {
 const StudentCharts = ({ student }) => {
   const gradeData =  prepareChartData(student.assignmentGrades)
   const attendanceData = prepareAttendanceData(student.attendance);
-
   return (
     <div style={{marginBottom: "20px", marginTop: "50px", fontWeight: "600"}}>
       <a>{student.userData.firstName} {student.userData.lastName}</a>
@@ -84,44 +89,67 @@ const StudentCharts = ({ student }) => {
             <Bar data={gradeData} options={{ scales: { y: { beginAtZero: true } }, plugins: {legend: {display: true}} }} />
           </div>
         ) : <div className="chart-container" style={{marginTop: "120px"}}>No assignment data available</div>}
-        {attendanceData && attendanceData.datasets && attendanceData.datasets.length > 0 && (
+        {attendanceData && attendanceData.datasets && attendanceData.datasets.length > 0 ? (
           <div className="chart-container">
             <Pie data={attendanceData} />
           </div>
-        )}
+        ):  <div className="chart-container" style={{marginTop: "120px"}}>No attendance data available</div>}
       </div>
     </div>
   );
 };
-const logoutUser = () => {
-  localStorage.removeItem("userData");
-  navigate("/");
-};
+
 
 const HomePageParent = () => {
-    return (
-        <div style={{textAlign: "center", fontSize: "20px"}}>
-          <header className="app-header">
-          <img
-          src={logo}
-          alt="Illini Logo"
-          className="logo"
-        />
-          <span style={{fontWeight: "550"}}>Parent Dashboard</span>
-            
-            <div className="container">
-              <button type="button" className="logout-button" onClick={logoutUser}>
-                Logout
-              </button>
-            </div>
-          </header>
-            <div>
-                {studentData.map(student => (
-                    <StudentCharts key={student.userData.userId} student={student} />
-                ))}
-            </div>
-        </div>
-    );
+  const navigate = useNavigate();
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/");
+  };
+  const [studentData, setStudentData] = React.useState([]);
+  const userData = localStorage.getItem("userData");
+  if (!userData) {
+    console.error("User data not found in local storage");
+    return;
+  }
+  const fetchData = async () => {
+    try{
+      const response = await fetch(`http://34.28.230.12/api/classroomgroup/getStudentAnalytics?userId=${JSON.parse(userData).userId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setStudentData(data.data);
+    } catch (error) {
+      console.error("Could not fetch student data:", error);
+    }
+  };
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+  return (
+      <div style={{textAlign: "center", fontSize: "20px"}}>
+        <header className="app-header">
+        <img
+        src={logo}
+        alt="Illini Logo"
+        className="logo"
+      />
+        <span style={{fontWeight: "550"}}>Parent Dashboard</span>
+          
+          <div className="container">
+            <button type="button" className="logout-button" onClick={logoutUser}>
+              Logout
+            </button>
+          </div>
+        </header>
+          <div>
+              {studentData.map(student => (
+                  <StudentCharts key={student.userData.userId} student={student} />
+              ))}
+          </div>
+      </div>
+  );
 };
 
 export default HomePageParent;

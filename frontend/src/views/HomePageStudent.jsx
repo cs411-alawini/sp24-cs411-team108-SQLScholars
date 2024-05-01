@@ -79,7 +79,7 @@ const HomePageStudent = () => {
 
   const logoutUser = () => {
     localStorage.removeItem("userData");
-    navigate("/login");
+    navigate("/");
   };
 
   return (

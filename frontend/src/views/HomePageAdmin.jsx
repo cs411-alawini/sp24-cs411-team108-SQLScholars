@@ -4,13 +4,13 @@ import "../css/HomePage.css";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import settingsbutton from "../img/three-dots.png";
-
+import profilePic from "../img/profile.png";
 
 const CourseCard = ({ course, onDelete }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); 
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const userData = localStorage.getItem("userData")
+  const userData = localStorage.getItem("userData");
   const parsedData = JSON.parse(userData);
   const uId = parsedData.userId;
   const openModal = () => setModalIsOpen(true);
@@ -27,34 +27,37 @@ const CourseCard = ({ course, onDelete }) => {
 
   const handleEdit = () => {
     // Add your logic to handle edit
-    navigate(`/editClassGroup?classGroupId=${course.classGroupId}&userId=${uId}`);
+    navigate(
+      `/editClassGroup?classGroupId=${course.classGroupId}&userId=${uId}`
+    );
     setMenuOpen(false); // Close the menu
   };
 
   // Function to handle delete
   const handleDelete = async () => {
-
     try {
-      const response = await fetch(`http://34.28.230.12/api/classroomgroup/delete`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          classGroupId: course.classGroupId,
-          userId:  uId
-      })
-    });
+      const response = await fetch(
+        `http://34.28.230.12/api/classroomgroup/delete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            classGroupId: course.classGroupId,
+            userId: uId,
+          }),
+        }
+      );
       if (!response.ok) {
-        throw new Error('Failed to delete the classroom group');
+        throw new Error("Failed to delete the classroom group");
       }
-      onDelete(course.classGroupId);  // Notify the parent component to update its state
+      onDelete(course.classGroupId); // Notify the parent component to update its state
       setMenuOpen(false); // Close the menu
     } catch (error) {
-      console.error('Error deleting classroom group:', error);
+      console.error("Error deleting classroom group:", error);
     }
   };
-
 
   return (
     <div className="course-card">
@@ -118,7 +121,7 @@ const CourseCard = ({ course, onDelete }) => {
 const HomePageAdmin = () => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const userData = localStorage.getItem("userData");
@@ -150,9 +153,10 @@ const HomePageAdmin = () => {
     fetchCourses();
   }, []);
 
-  
   const handleDeleteCourse = (classGroupId) => {
-    setCourses(courses => courses.filter(course => course.classGroupId !== classGroupId));
+    setCourses((courses) =>
+      courses.filter((course) => course.classGroupId !== classGroupId)
+    );
   };
 
   const logoutUser = () => {
@@ -160,19 +164,23 @@ const HomePageAdmin = () => {
     navigate("/");
   };
 
-  const filteredCourses = courses.filter((course) =>
-  course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  course.className.toLowerCase().includes(searchQuery.toLowerCase())
-);
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.className.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="app">
       <header className="app-header">
-        <input type="search" placeholder="Search for Classroom..." 
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        <input
+          type="search"
+          placeholder="Search for Classroom..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <div className="container">
+        <span style={{fontWeight: "550", fontSize: "20px", marginLeft: "450px"}}>Administrator</span>
+        <div className="container" style={{ marginLeft: "25%" }}>
           <button type="button" className="create-button" onClick={() => navigate('/createClassroom')}>
             Create Classroom
           </button>
@@ -180,10 +188,20 @@ const HomePageAdmin = () => {
             Logout
           </button>
         </div>
+        <img
+          className="profile-picture"
+          onClick={() => navigate("/profileView")}
+          src={profilePic}
+          alt="Profile Pic"
+        />
       </header>
       <div className="courses-container">
         {filteredCourses.map((course, index) => (
-          <CourseCard key={index} course={course} onDelete={handleDeleteCourse} />
+          <CourseCard
+            key={index}
+            course={course}
+            onDelete={handleDeleteCourse}
+          />
         ))}
       </div>
     </div>

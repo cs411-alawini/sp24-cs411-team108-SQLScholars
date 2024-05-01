@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
 import { useNavigate } from "react-router-dom";
+import profilePic from "../img/profile.png";
 
 const CourseCard = ({ course }) => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const CourseCard = ({ course }) => {
 const HomePageStudent = () => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const userData = localStorage.getItem("userData");
@@ -71,15 +72,15 @@ const HomePageStudent = () => {
     fetchCourses();
   }, []);
 
-  const filteredCourses = courses.filter((course) =>
-  course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  course.className.toLowerCase().includes(searchQuery.toLowerCase())
-);
-
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.className.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const logoutUser = () => {
     localStorage.removeItem("userData");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -91,12 +92,18 @@ const HomePageStudent = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-
-        <div className="container">
+        <span style={{fontWeight: "550", fontSize: "20px", marginLeft: "400px"}}>Student</span>
+        <div className="container" style={{ marginLeft: "40%" }}>
           <button type="button" className="logout-button" onClick={logoutUser}>
             Logout
           </button>
         </div>
+        <img
+          className="profile-picture"
+          onClick={() => navigate("/profileView")}
+          src={profilePic}
+          alt="Profile Pic"
+        />
       </header>
       <div className="courses-container">
         {filteredCourses.map((course, index) => (

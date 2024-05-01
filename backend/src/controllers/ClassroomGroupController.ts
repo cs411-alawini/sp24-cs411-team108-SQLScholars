@@ -287,12 +287,9 @@ class ClassroomGroupController{
             return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
         const classroomGroup = classroomGroupResponse[0][0];
-        const classroomGroupRecordingCountResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingCount());
-        if(classroomGroupRecordingCountResponse === null){
-            return apiResponse("Error in fetching ClassroomGroup Recording Count", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
-        }
-        const latestRecordingId = classroomGroupRecordingCountResponse[0][0].count;
-        const recordingCount =  parseInt(latestRecordingId.slice(4)) + 1;
+      
+        const classroomGroupRecordingCountResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingCount(classGroupId));
+        const recordingCount = classroomGroupRecordingCountResponse[0][0].latestRecordingId;
         const recordingId = `CRID${recordingCount.toString().padStart(5, '0')}`;
         if(recordingLink === null || recordingLink === "" || classDate === null || classDate === ""){
             return apiResponse("Please provide all the required details", RESPONSE.HTTP_BAD_REQUEST, {}, res);

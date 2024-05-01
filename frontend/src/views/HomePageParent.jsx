@@ -91,12 +91,9 @@ const HomePageParent = () => {
           alt="Illini Logo"
           className="logo"
         />
-          <span style={{marginLeft: "20%"}}>Parent Dashboard</span>
+          <span>Parent Dashboard</span>
             
             <div className="container">
-              <button type="button" className="create-button" onClick={() => navigate('/createClassroom')}>
-                Create Classroom
-              </button>
               <button type="button" className="logout-button" onClick={logoutUser}>
                 Logout
               </button>

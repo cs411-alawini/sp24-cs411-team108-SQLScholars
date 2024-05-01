@@ -87,6 +87,11 @@ useEffect(() => {
   console.log(courses);
   const navigate = useNavigate();
 
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/");
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
   
@@ -223,6 +228,16 @@ useEffect(() => {
   if (error) return <div>Error: {error}</div>;
 
   return (
+
+    <div>
+        <header className="app-header">
+        <span style={{fontWeight: "550", fontSize: "20px"}}>Administrator</span>
+        <div className="container">
+          <button type="button" className="logout-button" onClick={logoutUser}>
+            Logout
+          </button>
+        </div>
+      </header>
     <div className="form-container">
       <form onSubmit={handleSubmit}>
       <label>
@@ -352,7 +367,9 @@ useEffect(() => {
     </div>
   </>
 )}
-    </div>
+    
+</div>
+</div>
   );
 };
 

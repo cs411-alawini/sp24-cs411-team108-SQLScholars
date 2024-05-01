@@ -94,13 +94,6 @@ class AuthController{
         if (lastName) {
             updateFields.lastName = lastName;
         }
-        if (email) {
-            updateFields.email = email;
-            const response: any = await SQLHelper.executeQuery(SQLHelper.emailCheckQuery(email));
-            if(response === null || response[0].length != 0){
-                return apiResponse("User email already exists", RESPONSE.HTTP_BAD_REQUEST, {email}, res);
-            }
-        }
         if (password) {
             updateFields.password = password;
         }
@@ -123,6 +116,17 @@ class AuthController{
         if(checkUser === null || checkUser[0].length === 0){
             return apiResponse("User not found", RESPONSE.HTTP_BAD_REQUEST, {userId}, res);
         }
+        const user = checkUser[0][0];
+        if (email) {
+            if(email !== user.email){
+                updateFields.email = email;
+                const response: any = await SQLHelper.executeQuery(SQLHelper.emailCheckQuery(email));
+                if(response === null || response[0].length != 0){
+                    return apiResponse("User email already exists", RESPONSE.HTTP_BAD_REQUEST, {email}, res);
+                }
+            }
+            
+        }
         const response: any = await SQLHelper.executeQuery(SQLHelper.editUserQuery(userId, updateFields));
         if(response === null){
             return apiResponse("User Details not edited", RESPONSE.HTTP_BAD_REQUEST, {}, res);
@@ -131,8 +135,8 @@ class AuthController{
         if(fetchUserResponse === null || fetchUserResponse[0].length === 0){
             return apiResponse("Error occurred. Please try again later", RESPONSE.HTTP_BAD_REQUEST, {}, res);
         }
-        const user = fetchUserResponse[0][0];       
-        return apiResponse("User Details Edited", RESPONSE.HTTP_OK, {user}, res);
+        const newUser = fetchUserResponse[0][0];       
+        return apiResponse("User Details Edited", RESPONSE.HTTP_OK, {user: newUser}, res);
     }
 
     static async searchInUsers(req, res, next){

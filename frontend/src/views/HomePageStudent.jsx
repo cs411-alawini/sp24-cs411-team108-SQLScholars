@@ -80,7 +80,7 @@ const HomePageStudent = () => {
 
   const logoutUser = () => {
     localStorage.removeItem("userData");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -92,8 +92,8 @@ const HomePageStudent = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-
-        <div className="container" style={{ marginLeft: "75%" }}>
+        <span style={{fontWeight: "550", fontSize: "20px"}}>Student</span>
+        <div className="container style={{ marginLeft: "75%" }}">
           <button type="button" className="logout-button" onClick={logoutUser}>
             Logout
           </button>

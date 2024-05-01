@@ -137,7 +137,7 @@ const RecordingsView = () => {
 
   const openEditModal = (recording) => {
     setTRecordingLink(recording.recordingLink);
-    setTClassDate(recording.classDate);
+    setTClassDate(formatDate(recording.classDate));
     setRecordingId(recording.recordingId);
     setEditModalOpen(true);
   };
@@ -182,7 +182,13 @@ const RecordingsView = () => {
     setTClassDate("");
   };
 
-  const deleteRecording = async (recording) => {
+
+  const formatDate = (date) => {
+    var datePart = date.split('T')[0];
+    return datePart
+  };
+
+  const deleteRecording = async(recording) => {
     try {
       const response = await fetch(
         "http://34.28.230.12/api/classroomgroup/deleteRecording",

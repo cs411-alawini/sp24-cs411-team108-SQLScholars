@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../css/FormStyle.css";
-
-
+import "../css/CreateClassroom.css";
 
 const CreateClassroomPage = () => {
   const [newClassroom, setNewClassroom] = useState({
@@ -18,12 +17,17 @@ const CreateClassroomPage = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
+  const [isNewClassModalOpen, setIsNewClassModalOpen] = useState(false);
+  const [newCourseName, setNewCourseName] = useState('');
+  const [newClassName, setNewClassName] = useState('');
+  const [newCourseRating, setCourseRating] = useState('');
+
+  const [fetchTrigger, setFetchTrigger] = useState(0);
+
 
   useEffect(() => {
   const fetchCourses = async () => {
-    setIsLoading(true);
-    setError('');
-
     const userData = localStorage.getItem("userData");
     if (!userData) {
       setError('User data not found');
@@ -31,12 +35,12 @@ const CreateClassroomPage = () => {
       return;
     }
     
-    const parsedData = JSON.parse(userData);
-    const uId = parsedData.userId;
+  const parsedData = JSON.parse(userData);
+  const uId = parsedData.userId;
 
     try {
 
-      const response = await fetch(`http://34.28.230.12/api/course/fetch?userId=${uId}&limit=10`);
+      const response = await fetch(`http://34.28.230.12/api/course/fetch?userId=${uId}&limit=50`);
       if (!response.ok) {
         throw new Error('Failed to fetch courses');
       }
@@ -50,7 +54,7 @@ const CreateClassroomPage = () => {
     }
   };
   fetchCourses();
-}, []);
+}, [fetchTrigger]);
 
 useEffect(() => {
   const fetchClassrooms = async () => {
@@ -62,11 +66,11 @@ useEffect(() => {
       return;
     }
     
-    const parsedData = JSON.parse(userData);
-    const uId = parsedData.userId;
+  const parsedData = JSON.parse(userData);
+  const uId = parsedData.userId;
 
     try {
-      const response = await fetch(`http://34.28.230.12/api/classroom/fetch?userId=${uId}&limit=10`);
+      const response = await fetch(`http://34.28.230.12/api/classroom/fetch?userId=${uId}&limit=50`);
       if (!response.ok) {
         throw new Error('Failed to fetch classrooms');
       }
@@ -81,10 +85,15 @@ useEffect(() => {
   };
 
   fetchClassrooms();
-}, []); 
+}, [fetchTrigger]); 
 
   console.log(courses);
   const navigate = useNavigate();
+
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/");
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -115,10 +124,107 @@ useEffect(() => {
       
       const data = await response.json();
       console.log('Classroom created successfully:', data);
-      navigate('/homeAdmin'); // Navigate after successful creation
+      setFetchTrigger(prev => prev + 1); 
+      navigate('/homeAdmin')// Navigate after successful creation
     } catch (error) {
       console.error('Error creating classroom:', error);
     }
+  };
+  
+  const handleCourseModalOpen = () => {
+    setIsCourseModalOpen(true);
+  };
+  
+  const handleCourseModalClose = () => {
+    setIsCourseModalOpen(false);
+    setNewCourseName('');
+
+  };
+  
+  const handleClassModalOpen = () => {
+    setIsNewClassModalOpen(true);
+  };
+  
+  const handleClassModalClose = () => {
+    setIsNewClassModalOpen(false);
+    setNewClassName('');
+  };
+  
+
+  const handleNewCourseSubmit = async (event) => {
+    event.preventDefault();
+    const userData = localStorage.getItem("userData");
+      if (!userData) {
+        setError('User data not found');
+        setIsLoading(false);
+        return;
+      }
+      const parsedData = JSON.parse(userData);
+      const uId = parsedData.userId;
+    try {
+      const response = await fetch(`http://34.28.230.12/api/course/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subjectName: newCourseName,
+          userId: uId,
+          courseRating: 0
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create new course');
+      }
+      
+      const data = await response.json();
+      console.log('New Course created successfully:', data);
+      setFetchTrigger(prev => prev + 1);  // Navigate after successful creation
+    } catch (error) {
+      console.error('Error creating new Course:', error);
+    }
+    
+    console.log("New Course Added:", newCourseName); // Log the new course name
+    handleCourseModalClose();
+  };
+
+  const handleNewClassSubmit = async (event) => {
+    event.preventDefault();
+    const userData = localStorage.getItem("userData");
+      if (!userData) {
+        setError('User data not found');
+        setIsLoading(false);
+        return;
+      }
+      const parsedData = JSON.parse(userData);
+      const uId = parsedData.userId;
+    
+    try {
+      const response = await fetch(`http://34.28.230.12/api/classroom/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          className: newClassName,
+          userId: uId,
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create new class');
+      }
+      
+      const data = await response.json();
+      console.log('New Class created successfully:', data);
+      setFetchTrigger(prev => prev + 1);  // Navigate after successful creation
+    } catch (error) {
+      console.error('Error creating new Class:', error);
+    }
+    
+    console.log("New Class Added:", newClassName); // Log the new course name
+    handleClassModalClose();
   };
   
 
@@ -126,29 +232,45 @@ useEffect(() => {
   if (error) return <div>Error: {error}</div>;
 
   return (
+
+    <div>
+        <header className="app-header">
+        <span style={{fontWeight: "550", fontSize: "20px"}}>Administrator</span>
+        <div className="container">
+          <button type="button" className="logout-button" onClick={logoutUser}>
+            Logout
+          </button>
+        </div>
+      </header>
     <div className="form-container">
       <form onSubmit={handleSubmit}>
-        <label>
-          Course:
+      <label>
+        Course:
+        <div style={{ display: 'flex', alignItems: 'center', width:'100%', justifyContent: 'space-between' }}>
           <select
             value={newClassroom.courseId}
             onChange={(e) => setNewClassroom({ ...newClassroom, courseId: e.target.value })}
             required
+            style={{ flex: 1, marginRight: '10px' }}  // Ensures dropdown takes most of the space and leaves some margin
           >
-            <option value="">Select a subject</option>
+            <option value="">Select a course</option>
             {courses.map(course => (
               <option key={course.courseId} value={course.courseId}>
                 {course.subjectName}
               </option>
             ))}
           </select>
-        </label>
+          <button type="button" onClick={handleCourseModalOpen}>Add Course</button>
+        </div>
+      </label>
         <label>
           Class:
+          <div style={{ display: 'flex', alignItems: 'center', width:'100%', justifyContent: 'space-between' }}>
           <select
             value={newClassroom.classroomId}
             onChange={(e) => setNewClassroom({ ...newClassroom, classroomId: e.target.value })}
             required
+            style={{ flex: 1, marginRight: '10px' }} 
           >
             <option value="">Select a class</option>
             {classrooms.map(classroom => (
@@ -157,6 +279,8 @@ useEffect(() => {
               </option>
             ))}
           </select>
+          <button type="button" onClick={handleClassModalOpen}>Add Class</button>
+          </div>
         </label>
         <label>
           Starts At:
@@ -188,7 +312,68 @@ useEffect(() => {
         </label>
         <button type="submit">Create Classroom</button>
       </form>
+
+      
+      
+  {isCourseModalOpen && (
+  <>
+    <div className="overlay" onClick={handleCourseModalClose}></div>
+    <div className="modal">
+      <div className="modal-content">
+        <span className="close-button" onClick={handleCourseModalClose}>&times;</span>
+        <form onSubmit={handleNewCourseSubmit}>
+          <label>
+            New Course Name:
+            <input
+              type="text"
+              value={newCourseName}
+              onChange={(e) => setNewCourseName(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Course Rating:
+            <input
+              type="text"
+              value={newCourseRating}
+              onChange={(e) => setCourseRating(e.target.value)}
+              required
+            />
+          </label>
+          <button type="submit" className="modal-button">Add Course</button>
+        </form>
+      </div>
     </div>
+  </>
+)}
+
+
+{isNewClassModalOpen && (
+  <>
+  <div className="overlay" onClick={handleClassModalClose}> </div>
+    <div className="modal">
+      <div className="modal-content">
+        <span className="close-button" onClick={handleClassModalClose}>&times;</span>
+        <form onSubmit={handleNewClassSubmit}>
+          <label>
+            New Class Name:
+            <input
+              type="text"
+              value={newClassName}
+              onChange={(e) => setNewClassName(e.target.value)}
+              required
+            />
+          </label>
+
+          <button type="submit" className="modal-button">Add Class</button>
+        </form>
+      </div>
+    </div>
+  </>
+)}
+    
+</div>
+</div>
   );
 };
 

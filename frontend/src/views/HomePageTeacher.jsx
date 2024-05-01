@@ -7,8 +7,6 @@ import profilePic from "../img/profile.png";
 const CourseCard = ({ course }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const navigate = useNavigate();
-  const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
   const handleCardClick = () => {
     navigate(
       `/classGroupview?classGroupId=${course.classGroupId}&classroomId=${course.classroomId}`
@@ -46,6 +44,7 @@ const CourseCard = ({ course }) => {
 const HomePageStudent = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const userData = localStorage.getItem("userData");
@@ -77,15 +76,26 @@ const HomePageStudent = () => {
     fetchCourses();
   }, []);
 
+  const filteredCourses = courses.filter((course) =>
+  course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  course.className.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
   const logoutUser = () => {
     localStorage.removeItem("userData");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return (
     <div className="app">
       <header className="app-header">
-        <input type="search" placeholder="Search for Classroom..." />
+      <input
+          type="search"
+          placeholder="Search for Classroom..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <span style={{fontWeight: "550", fontSize: "20px"}}>Teacher</span>
         <div className="container" style={{ marginLeft: "75%" }}>
           <button type="button" className="logout-button" onClick={logoutUser}>
             Logout
@@ -99,7 +109,7 @@ const HomePageStudent = () => {
         />
       </header>
       <div className="courses-container">
-        {courses.map((course, index) => (
+        {filteredCourses.map((course, index) => (
           <CourseCard key={index} course={course} />
         ))}
       </div>

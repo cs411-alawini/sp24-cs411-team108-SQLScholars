@@ -45,7 +45,7 @@
   }
   
   .card-header img {
-    height: 50px; /* Ensure the logo has a fixed height */
+    height: 40px; /* Ensure the logo has a fixed height */
   }
   
   .card-body {
@@ -119,15 +119,16 @@
     width: 200px; /* Consistent width */
   }
 
-  /* Styles for HomePageParent*/
-  .chart-container {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+  .charts-row {
+    display: flex;
+    justify-content: space-around; /* Adjusts spacing between the charts */
   }
-
+  
+  .chart-container {
+    width: 100%;  /* Set the width as needed */
+    height: 300px; /* Set the height as needed */
+    padding-left: 10%;
+  }
   .chart-title {
     text-align: center;
     margin-bottom: 20px;
@@ -149,7 +150,8 @@
   
   .three-dots-icon {
     width: 20px; /* Adjust size as needed */
-    height: 5px; /* Adjust size as needed */
+    height: 25px !important;
+    margin-top: 75%;
   }
 
   .menu-content {

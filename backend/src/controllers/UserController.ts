@@ -84,6 +84,8 @@ class AuthController{
         const userType = body.userType;
         const address = body.address;
         const dob = body.dob;
+        const occupation = body.occupation;
+        const studentIds = body.studentIds;
 
         const updateFields: any = {};
         if (firstName) {
@@ -106,6 +108,12 @@ class AuthController{
         }
         if (dob) {
             updateFields.dob = dob;
+        }
+        if(occupation){
+            updateFields.occupation = occupation;
+        }
+        if(studentIds){
+            updateFields.studentIds = studentIds;
         }
         const checkUser: any = await SQLHelper.executeQuery(SQLHelper.getUserById(userId));
         if(checkUser === null || checkUser[0].length === 0){

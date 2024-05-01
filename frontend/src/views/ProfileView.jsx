@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/Hamburger2.css";
+import profilePic from "../img/profile-pic.png"
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const ProfileView = () => {
@@ -15,6 +16,7 @@ const ProfileView = () => {
   const [occupation, setOccupation] = useState("");
   const [studentIds, setStudentIds] = useState("");
   const [nav_path, setPath] = useState("/homeTeacher");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -90,13 +92,13 @@ const ProfileView = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+
       console.log("Profile updated successfully:", data);
       // Handle success response here
     } catch (error) {
       console.error("Could not update profile:", error);
     }
   };
-
   return (
     <div className="h-container">
       <div className="header">
@@ -107,83 +109,39 @@ const ProfileView = () => {
           onClick={() => navigate(nav_path)}
         />
         <h1 className="student-title">{userType}</h1>
+        <img className="profile-picture" onClick={() => navigate("/profileView")} src={profilePic} alt="Profile Pic"/>
       </div>
       <div className="profile-content">
         <h1>Profile</h1>
         <div className="profile-field">First Name</div>
-        <input
-          type="text"
-          placeholder="Enter First Name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          className="profile-input"
-        ></input>
+        <input  type="text" placeholder="Enter First Name" value={firstName} 
+                                                onChange={(e) => setFirstName(e.target.value)} className="profile-input"></input>
         <div className="profile-field">Last Name</div>
-        <input
-          type="text"
-          placeholder="Enter Last Name"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          className="profile-input"
-        ></input>
+        <input type="text" placeholder="Enter Last Name" value={lastName} 
+                                                onChange={(e) => setLastName(e.target.value)} className="profile-input"></input>
         <div className="profile-field">Email</div>
-        <input
-          type="email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="profile-input"
-        ></input>
+        <input type="email" placeholder="Enter Email" value={email} 
+                                                onChange={(e) => setEmail(e.target.value)} className="profile-input"></input>
         <div className="profile-field">Password</div>
-        <input
-          type="password"
-          placeholder="Enter Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="profile-input"
-        ></input>
+        <input type="password" placeholder="Enter Password" value={password} 
+                                                onChange={(e) => setPassword(e.target.value)} className="profile-input"></input>
         <div className="profile-field">Address</div>
-        <input
-          type="text"
-          placeholder="Enter Address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          className="profile-input"
-        ></input>
+        <input type="text" placeholder="Enter Address" value={address} 
+                                                onChange={(e) => setAddress(e.target.value)} className="profile-input"></input>
         <div className="profile-field">Date of Birth</div>
-        <input
-          type="date"
-          placeholder="Enter DOB"
-          value={dob}
-          onChange={(e) => setDOB(e.target.value)}
-          className="profile-input"
-        ></input>
-        {userType === "Parent" && (
-          <div style={{ marginLeft: "0" }}>
-            <div className="profile-field">Occupation</div>
-            <input
-              type="text"
-              placeholder="Enter Occupation"
-              value={occupation}
-              onChange={(e) => setOccupation(e.target.value)}
-              className="parent-input"
-            ></input>
-            <div className="profile-field">Student Ids</div>
-            <input
-              type="text"
-              placeholder="Enter Student Ids"
-              value={studentIds}
-              onChange={(e) => setStudentIds(e.target.value)}
-              className="parent-input"
-            ></input>
-          </div>
+        <input type="date" placeholder="Enter DOB" value={dob} 
+                                                onChange={(e) => setDOB(e.target.value)} className="profile-input"></input>
+        {(userType === "Parent") && (
+            <div style={{marginLeft:"0"}}>
+              <div className="profile-field">Occupation</div>
+              <input type="text" placeholder="Enter Occupation" value={occupation} 
+                                                onChange={(e) => setOccupation(e.target.value)} className="parent-input"></input>
+              <div className="profile-field">Student Ids</div>
+              <input type="text" placeholder="Enter Student Ids" value={studentIds} 
+                                                onChange={(e) => setStudentIds(e.target.value)} className="parent-input"></input>
+            </div>
         )}
-        <button
-          style={{ marginLeft: "47%", marginTop: "2%", width: "5%" }}
-          onClick={() => editProfile()}
-        >
-          Submit
-        </button>
+        <button style={{marginLeft:"47%", marginTop:"2%", width:"5%"}} onClick={() => editProfile()}>Submit</button>
       </div>
     </div>
   );

@@ -132,7 +132,7 @@ const RecordingsView = () => {
 
   const openEditModal = (recording) => {
     setTRecordingLink(recording.recordingLink);
-    setTClassDate(recording.classDate);
+    setTClassDate(formatDate(recording.classDate));
     setRecordingId(recording.recordingId);
     setEditModalOpen(true);
   };
@@ -173,6 +173,11 @@ const RecordingsView = () => {
     setTRecordingLink("");
     setTClassDate("");
   }
+
+  const formatDate = (date) => {
+    var datePart = date.split('T')[0];
+    return datePart
+  };
 
   const deleteRecording = async(recording) => {
     try {

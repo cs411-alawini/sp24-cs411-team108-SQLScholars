@@ -23,6 +23,9 @@ const CreateClassroomPage = () => {
   const [newClassName, setNewClassName] = useState('');
   const [newCourseRating, setCourseRating] = useState('');
 
+  const [fetchTrigger, setFetchTrigger] = useState(0);
+
+
   useEffect(() => {
   const fetchCourses = async () => {
     const userData = localStorage.getItem("userData");
@@ -51,7 +54,7 @@ const CreateClassroomPage = () => {
     }
   };
   fetchCourses();
-}, []);
+}, [fetchTrigger]);
 
 useEffect(() => {
   const fetchClassrooms = async () => {
@@ -82,7 +85,7 @@ useEffect(() => {
   };
 
   fetchClassrooms();
-}, []); 
+}, [fetchTrigger]); 
 
   console.log(courses);
   const navigate = useNavigate();
@@ -121,7 +124,8 @@ useEffect(() => {
       
       const data = await response.json();
       console.log('Classroom created successfully:', data);
-      navigate('/homeAdmin'); // Navigate after successful creation
+      setFetchTrigger(prev => prev + 1); 
+      navigate('/homeAdmin')// Navigate after successful creation
     } catch (error) {
       console.error('Error creating classroom:', error);
     }
@@ -176,7 +180,7 @@ useEffect(() => {
       
       const data = await response.json();
       console.log('New Course created successfully:', data);
-      navigate('/homeAdmin'); // Navigate after successful creation
+      setFetchTrigger(prev => prev + 1);  // Navigate after successful creation
     } catch (error) {
       console.error('Error creating new Course:', error);
     }
@@ -214,7 +218,7 @@ useEffect(() => {
       
       const data = await response.json();
       console.log('New Class created successfully:', data);
-      navigate('/homeAdmin'); // Navigate after successful creation
+      setFetchTrigger(prev => prev + 1);  // Navigate after successful creation
     } catch (error) {
       console.error('Error creating new Class:', error);
     }

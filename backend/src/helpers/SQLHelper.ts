@@ -121,7 +121,7 @@ class SQLHelper{
         return `CALL FetchStudentAnalytics("${userId}");`;
     }
     static getAllClassroomGroupsForAdmin(){
-        return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by classGroupId DESC LIMIT 10;`;
+        return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by classGroupId DESC;`;
     }
     static getClassroomGroupToppers(){
         return `select g.classGroupId, u.userId as topperUserId, u.firstName AS topperFirstName, u.lastName AS topperLastName, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a NATURAL JOIN Grades g NATURAL JOIN Users u group by g.classGroupId, u.userId having (g.classGroupId, topperAverage) IN (select g.classGroupId, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a JOIN Grades g on a.assignmentId=g.assignmentId group by g.classGroupId) order by g.classGroupId;`;

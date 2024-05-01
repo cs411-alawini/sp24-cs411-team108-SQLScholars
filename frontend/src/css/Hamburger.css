@@ -275,6 +275,11 @@
   /* margin-left: 55%; */
 }
 
-.profile-picture:hover {
+.profile-picture1{
+  height: 70%;
+  width: 2.5%;
+  margin-left: 43%;
+}
+.profile-picture1:hover {
   cursor: pointer;
 }

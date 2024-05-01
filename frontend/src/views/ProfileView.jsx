@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/Hamburger2.css";
-import profilePic from "../img/profile-pic.png"
+import profilePic from "../img/profile.png"
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const ProfileView = () => {
@@ -108,8 +108,8 @@ const ProfileView = () => {
           className="logo"
           onClick={() => navigate(nav_path)}
         />
-        <h1 className="student-title">{userType}</h1>
-        <img className="profile-picture" onClick={() => navigate("/profileView")} src={profilePic} alt="Profile Pic"/>
+        <h1 className="student-title" style={{marginBottom: "10px"}}>{userType}</h1>
+        <img className="profile-picture1" onClick={() => navigate("/profileView")} src={profilePic} alt="Profile Pic"/>
       </div>
       <div className="profile-content">
         <h1>Profile</h1>

@@ -121,7 +121,7 @@ class SQLHelper{
         return `CALL FetchStudentAnalytics("${userId}");`;
     }
     static getAllClassroomGroupsForAdmin(){
-        return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by createdAt DESC LIMIT 10;`;
+        return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by classGroupId DESC;`;
     }
     static getClassroomGroupToppers(){
         return `select g.classGroupId, u.userId as topperUserId, u.firstName AS topperFirstName, u.lastName AS topperLastName, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a NATURAL JOIN Grades g NATURAL JOIN Users u group by g.classGroupId, u.userId having (g.classGroupId, topperAverage) IN (select g.classGroupId, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a JOIN Grades g on a.assignmentId=g.assignmentId group by g.classGroupId) order by g.classGroupId;`;
@@ -134,7 +134,7 @@ class SQLHelper{
         return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses where classGroupId = "${classGroupId}";`;
     }
     static getClassroomGroupCount(){
-        return `SELECT COUNT(*) as count FROM ClassroomGroups;`;
+        return `SELECT classGroupId as latestClassGroupId FROM ClassroomGroups order by classGroupId DESC LIMIT 1;`;
     }
     static createClassroomGroup(classGroupId, classroomId, courseId, zoomLink, classStartTimings, classDuration){
         return `INSERT INTO ClassroomGroups(classGroupId, classroomId, courseId, zoomLink, classStartTimings, classDuration) VALUES("${classGroupId}", "${classroomId}", "${courseId}", "${zoomLink}", "${classStartTimings}", "${classDuration}");`;
@@ -153,8 +153,8 @@ class SQLHelper{
     static joinClassroomGroup(userId, classGroupId, classroomId, courseId, userJoinedAt){
         return `INSERT INTO ClassroomUsers(userId, classGroupId, classroomId, courseId, userJoinedAt) VALUES("${userId}", "${classGroupId}", "${classroomId}", "${courseId}", "${userJoinedAt}");`;
     }
-    static getClassroomGroupRecordingCount(classGroupId){
-        return `SELECT COUNT(*) as count FROM ClassGroupRecordings where classGroupId = "${classGroupId}";`;
+    static getClassroomGroupRecordingCount(){
+        return `SELECT recordingId as latestRecordingId FROM ClassGroupRecordings order by recordingId DESC LIMIT 1;`;
     }
     static addClassroomGroupRecording(recordingId, classGroupId, classroomId, courseId, classDate, recordingLink){
         return `INSERT INTO ClassGroupRecordings(recordingId, classGroupId, classroomId, courseId, classDate, recordingLink) VALUES("${recordingId}", "${classGroupId}", "${classroomId}", "${courseId}", "${classDate}", "${recordingLink}");`;
@@ -212,8 +212,8 @@ class SQLHelper{
     static createAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent){
         return `INSERT INTO Grades(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent) VALUES("${assignmentId}", "${userId}", "${classGroupId}", "${classroomId}", "${courseId}", ${grade}, "${remarks}", ${sentimentScore}, ${isNotificationSent});`;
     }
-    static editAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks){
-        return `UPDATE Grades SET grade=${grade}, remarks="${remarks}" WHERE assignmentId = "${assignmentId}" AND userId = "${userId}" AND classGroupId = "${classGroupId}" AND classroomId = "${classroomId}" AND courseId = "${courseId}";`;
+    static editAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentscore){
+        return `UPDATE Grades SET grade=${grade}, remarks="${remarks}", sentimentScore=${sentimentscore}, isNotificationSent = false WHERE assignmentId = "${assignmentId}" AND userId = "${userId}" AND classGroupId = "${classGroupId}" AND classroomId = "${classroomId}" AND courseId = "${courseId}";`;
     }
     static createAttendance(userId, classroomId, isPresent, attendanceDate, isParentsNotified){
         return `INSERT INTO Attendance(studentId, classroomId, isPresent, attendanceDate, isParentsNotified) VALUES("${userId}", "${classroomId}", ${isPresent}, "${attendanceDate}", ${isParentsNotified});`;

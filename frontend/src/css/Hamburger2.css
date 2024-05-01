@@ -254,3 +254,30 @@
     font-size: 22px;
   }
   
+  .profile-field {
+    font-size: 26px;
+  }
+  
+  .profile-input {
+    width: 35%;
+    margin-left: 33%;
+    font-size: 22px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center; /* Centers the buttons horizontally */
+    margin-top: 20px;
+  }
+
+  .parent-input {
+    width: 35%;
+    margin-left: 1%;
+    font-size: 22px;
+  }
+
+  .profile-picture {
+    height: 85%;
+    width: 7%;
+    margin-left: 80%;
+  }

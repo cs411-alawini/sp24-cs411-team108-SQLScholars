@@ -14,6 +14,7 @@ function ClassGroupView() {
   const location = useLocation();
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
+  const [nav_path, setPath] = useState("/homeTeacher");
 
   useEffect(() => {
     const userData = localStorage.getItem("userData");
@@ -21,18 +22,23 @@ function ClassGroupView() {
       const parsedData = JSON.parse(userData);
       if (parsedData.userType == 0) {
         setUserId("Admin");
+        setPath("/homeAdmin");
       } else if (parsedData.userType == 1) {
         setUserId("Teacher");
+        setPath("/homeTeacher");
       } else if (parsedData.userType == 2) {
         setUserId("Student");
+        setPath("/homeStudent");
       } else if (parsedData.userType == 3) {
         setUserId("Parent");
+        setPath("/homeParent");
       }
     } else {
       console.error("User data not found in local storage");
     }
 
     const fetchDetails = async () => {
+      console.log("nav_path:", nav_path);
       try {
         const userData = localStorage.getItem("userData");
         const parsedData = JSON.parse(userData);
@@ -81,8 +87,8 @@ function ClassGroupView() {
     },
     {
       id: "recording",
-      label : "Recordings",
-      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
+      label: "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`,
     },
   ];
 
@@ -93,7 +99,7 @@ function ClassGroupView() {
 
   const logoutUser = () => {
     localStorage.removeItem("userData");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -103,11 +109,11 @@ function ClassGroupView() {
           src={logo}
           alt="Illini Logo"
           className="logo"
-          onClick={() => navigate("/homeStudent")}
+          onClick={() => navigate(nav_path)}
         />
         <h1 className="student-title">{userType}</h1>
         <header className="app-header">
-          <div className="container" style={{ marginLeft: "500px" }}>
+          <div className="container" style={{ marginLeft: "1200px" }}>
             <button
               type="button"
               className="logout-button"

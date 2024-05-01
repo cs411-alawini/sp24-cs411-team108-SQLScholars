@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
 import { useNavigate } from "react-router-dom";
+import profilePic from "../img/profile.png";
 
 const CourseCard = ({ course }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const navigate = useNavigate();
-  const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
   const handleCardClick = () => {
     navigate(
       `/classGroupview?classGroupId=${course.classGroupId}&classroomId=${course.classroomId}`
@@ -45,6 +44,7 @@ const CourseCard = ({ course }) => {
 const HomePageStudent = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const userData = localStorage.getItem("userData");
@@ -76,23 +76,40 @@ const HomePageStudent = () => {
     fetchCourses();
   }, []);
 
+  const filteredCourses = courses.filter((course) =>
+  course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  course.className.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
   const logoutUser = () => {
     localStorage.removeItem("userData");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return (
     <div className="app">
       <header className="app-header">
-        <input type="search" placeholder="Search for Classroom..." />
-        <div className="container">
+      <input
+          type="search"
+          placeholder="Search for Classroom..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <span style={{fontWeight: "550", fontSize: "20px", marginLeft: "500px"}}>Teacher</span>
+        <div className="container" style={{ marginLeft: "35%" }}>
           <button type="button" className="logout-button" onClick={logoutUser}>
             Logout
           </button>
         </div>
+        <img
+          className="profile-picture"
+          onClick={() => navigate("/profileView")}
+          src={profilePic}
+          alt="Profile Pic"
+        />
       </header>
       <div className="courses-container">
-        {courses.map((course, index) => (
+        {filteredCourses.map((course, index) => (
           <CourseCard key={index} course={course} />
         ))}
       </div>

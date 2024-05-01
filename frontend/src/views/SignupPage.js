@@ -107,7 +107,7 @@ const SignUp = () => {
   };
   const navigate = useNavigate();
   const navigateToLogin = () => {
-    navigate("/login");
+    navigate("/");
   };
   return (
     <div

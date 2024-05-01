@@ -3,6 +3,7 @@ import { Bar, Pie } from 'react-chartjs-2';
 import logo from "../img/illini_logo.png";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js'; // Import necessary components
 import { useNavigate } from 'react-router-dom';
+import profilePic from "../img/profile.png";
 
 // Register the components
 ChartJS.register(
@@ -54,8 +55,8 @@ const prepareAttendanceData = (attendance) => {
     if(attendance.length === 0) {
       return {};
     }
-    const presentDays = attendance.filter(item => item.isPresent === 1).length;
-    const absentDays = attendance.filter(item => item.isPresent === 0).length;
+    const presentDays = attendance.filter(item => item.userAttendance === 1).length;
+    const absentDays = attendance.filter(item => item.userAttendance === 0).length;
     if(presentDays === 0 && absentDays === 0) {
       return {};
     }
@@ -137,11 +138,17 @@ const HomePageParent = () => {
       />
         <span style={{fontWeight: "550"}}>Parent Dashboard</span>
           
-          <div className="container">
+          <div className="container" style={{marginLeft: "70%"}}>
             <button type="button" className="logout-button" onClick={logoutUser}>
               Logout
             </button>
           </div>
+          <img
+          className="profile-picture"
+          onClick={() => navigate("/profileView")}
+          src={profilePic}
+          alt="Profile Pic"
+        />
         </header>
           <div>
               {studentData.map(student => (

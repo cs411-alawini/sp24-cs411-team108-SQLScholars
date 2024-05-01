@@ -134,7 +134,7 @@ class SQLHelper{
         return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses where classGroupId = "${classGroupId}";`;
     }
     static getClassroomGroupCount(){
-        return `SELECT COUNT(*) as count FROM ClassroomGroups;`;
+        return `SELECT classGroupId as latestClassGroupId FROM ClassroomGroups order by classGroupId DESC LIMIT 1;`;
     }
     static createClassroomGroup(classGroupId, classroomId, courseId, zoomLink, classStartTimings, classDuration){
         return `INSERT INTO ClassroomGroups(classGroupId, classroomId, courseId, zoomLink, classStartTimings, classDuration) VALUES("${classGroupId}", "${classroomId}", "${courseId}", "${zoomLink}", "${classStartTimings}", "${classDuration}");`;
@@ -153,8 +153,8 @@ class SQLHelper{
     static joinClassroomGroup(userId, classGroupId, classroomId, courseId, userJoinedAt){
         return `INSERT INTO ClassroomUsers(userId, classGroupId, classroomId, courseId, userJoinedAt) VALUES("${userId}", "${classGroupId}", "${classroomId}", "${courseId}", "${userJoinedAt}");`;
     }
-    static getClassroomGroupRecordingCount(classGroupId){
-        return `SELECT COUNT(*) as count FROM ClassGroupRecordings where classGroupId = "${classGroupId}";`;
+    static getClassroomGroupRecordingCount(){
+        return `SELECT recordingId as latestRecordingId FROM ClassGroupRecordings order by recordingId DESC LIMIT 1;`;
     }
     static addClassroomGroupRecording(recordingId, classGroupId, classroomId, courseId, classDate, recordingLink){
         return `INSERT INTO ClassGroupRecordings(recordingId, classGroupId, classroomId, courseId, classDate, recordingLink) VALUES("${recordingId}", "${classGroupId}", "${classroomId}", "${courseId}", "${classDate}", "${recordingLink}");`;

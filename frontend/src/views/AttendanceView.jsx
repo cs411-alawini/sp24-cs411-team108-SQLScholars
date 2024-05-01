@@ -21,11 +21,6 @@ const AttendanceView = () => {
     {
       id: "home",
       label: "Home",
-      path: `/homeStudent`,
-    },
-    {
-      id: "classGroup",
-      label: "ClassGroup View",
       path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
@@ -42,6 +37,11 @@ const AttendanceView = () => {
       id: "student",
       label: "Students",
       path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
+    },
+    {
+      id: "recording",
+      label : "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
     },
   ];
 
@@ -110,7 +110,7 @@ const AttendanceView = () => {
     } catch (error) {
       console.error("Failed to process attendance:", error);
     }
-    // Close the modal and reset form after submission
+
     setModalOpen(false);
     setUserId("");
     setAttendanceDate("");
@@ -122,11 +122,32 @@ const AttendanceView = () => {
     setModalOpen(true);
   };
 
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/login");
+  };
+
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img
+          src={logo}
+          alt="Illini Logo"
+          className="logo"
+          onClick={() => navigate("/homeStudent")}
+        />
         <h1 className="student-title">{userType}</h1>
+        <header className="app-header">
+          <div className="container" style={{ marginLeft: "500px" }}>
+            <button
+              type="button"
+              className="logout-button"
+              onClick={logoutUser}
+            >
+              Logout
+            </button>
+          </div>
+        </header>
       </div>
       <button
         className={`hamburger-icon ${isActive ? "active" : ""}`}

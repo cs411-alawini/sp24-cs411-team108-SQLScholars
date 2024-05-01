@@ -11,6 +11,10 @@ import AssignmentView from "./views/AssignmentView";
 import GradesView from "./views/GradesView";
 import AttendanceView from "./views/AttendanceView";
 import StudentView from "./views/StudentsView";
+import RecordingsView from "./views/RecordingsView";
+import ProfileView from "./views/ProfileView";
+import CreateClassroomPage from "./views/CreateClassroomPage";
+import EditClass from "./views/EditClass";
 
 const App = () => {
   return (
@@ -28,6 +32,13 @@ const App = () => {
         <Route path="/attendanceView" element={<AttendanceView />}></Route>
         <Route path="/studentView" element={<StudentView />}></Route>
         <Route path="/classGroupView" element={<ClassGroupView />}></Route>
+        <Route path="/recordingsView" element={<RecordingsView />}></Route>
+        <Route path="/profileView" element={<ProfileView />}></Route>
+        <Route path="/editClassGroup" element={<EditClass />}></Route>
+        <Route
+          path="/createClassroom"
+          element={<CreateClassroomPage />}
+        ></Route>
       </Routes>
     </BrowserRouter>
   );

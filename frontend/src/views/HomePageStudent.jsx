@@ -4,10 +4,7 @@ import "../css/HomePage.css";
 import { useNavigate } from "react-router-dom";
 
 const CourseCard = ({ course }) => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const navigate = useNavigate();
-  const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
   const handleCardClick = () => {
     navigate(
       `/classGroupview?classGroupId=${course.classGroupId}&classroomId=${course.classroomId}`
@@ -43,6 +40,8 @@ const CourseCard = ({ course }) => {
 const HomePageStudent = () => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     const userData = localStorage.getItem("userData");
     if (!userData) {
@@ -54,7 +53,6 @@ const HomePageStudent = () => {
     const { userId } = JSON.parse(userData);
 
     console.log(`Fetching courses for user ${userId}`);
-
     const fetchCourses = async () => {
       try {
         const response = await fetch(
@@ -73,6 +71,12 @@ const HomePageStudent = () => {
     fetchCourses();
   }, []);
 
+  const filteredCourses = courses.filter((course) =>
+  course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  course.className.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
+
   const logoutUser = () => {
     localStorage.removeItem("userData");
     navigate("/login");
@@ -81,7 +85,13 @@ const HomePageStudent = () => {
   return (
     <div className="app">
       <header className="app-header">
-        <input type="search" placeholder="Search for Classroom..." />
+        <input
+          type="search"
+          placeholder="Search for Classroom..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
         <div className="container">
           <button type="button" className="logout-button" onClick={logoutUser}>
             Logout
@@ -89,7 +99,7 @@ const HomePageStudent = () => {
         </div>
       </header>
       <div className="courses-container">
-        {courses.map((course, index) => (
+        {filteredCourses.map((course, index) => (
           <CourseCard key={index} course={course} />
         ))}
       </div>

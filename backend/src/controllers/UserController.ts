@@ -94,6 +94,10 @@ class AuthController{
         }
         if (email) {
             updateFields.email = email;
+            const response: any = await SQLHelper.executeQuery(SQLHelper.emailCheckQuery(email));
+            if(response === null || response[0].length != 0){
+                return apiResponse("User email already exists", RESPONSE.HTTP_BAD_REQUEST, {email}, res);
+            }
         }
         if (password) {
             updateFields.password = password;

@@ -6,10 +6,13 @@ import { useNavigate } from "react-router-dom";
 import settingsbutton from "../img/three-dots.png";
 
 
-const CourseCard = ({ course }) => {
+const CourseCard = ({ course, onDelete }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); 
 
+  const userData = localStorage.getItem("userData")
+  const parsedData = JSON.parse(userData);
+  const uId = parsedData.userId;
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -24,16 +27,34 @@ const CourseCard = ({ course }) => {
 
   const handleEdit = () => {
     // Add your logic to handle edit
-    navigate(`/editClassGroup/${course.classGroupId}`);
+    navigate(`/editClassGroup?classGroupId=${course.classGroupId}&userId=${uId}`);
     setMenuOpen(false); // Close the menu
   };
 
   // Function to handle delete
-  const handleDelete = () => {
-    // Add your logic to handle delete
-    console.log('Delete:', course);
-    setMenuOpen(false); // Close the menu
+  const handleDelete = async () => {
+
+    try {
+      const response = await fetch(`http://34.28.230.12/api/classroomgroup/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          classGroupId: course.classGroupId,
+          userId:  uId
+      })
+    });
+      if (!response.ok) {
+        throw new Error('Failed to delete the classroom group');
+      }
+      onDelete(course.classGroupId);  // Notify the parent component to update its state
+      setMenuOpen(false); // Close the menu
+    } catch (error) {
+      console.error('Error deleting classroom group:', error);
+    }
   };
+
 
   return (
     <div className="course-card">
@@ -97,6 +118,8 @@ const CourseCard = ({ course }) => {
 const HomePageAdmin = () => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     const userData = localStorage.getItem("userData");
     if (!userData) {
@@ -127,15 +150,28 @@ const HomePageAdmin = () => {
     fetchCourses();
   }, []);
 
+  
+  const handleDeleteCourse = (classGroupId) => {
+    setCourses(courses => courses.filter(course => course.classGroupId !== classGroupId));
+  };
+
   const logoutUser = () => {
     localStorage.removeItem("userData");
     navigate("/");
   };
 
+  const filteredCourses = courses.filter((course) =>
+  course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  course.className.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
   return (
     <div className="app">
       <header className="app-header">
-        <input type="search" placeholder="Search for Classroom..." />
+        <input type="search" placeholder="Search for Classroom..." 
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        />
         <div className="container">
           <button type="button" className="create-button" onClick={() => navigate('/createClassroom')}>
             Create Classroom
@@ -146,8 +182,8 @@ const HomePageAdmin = () => {
         </div>
       </header>
       <div className="courses-container">
-        {courses.map((course, index) => (
-          <CourseCard key={index} course={course} />
+        {filteredCourses.map((course, index) => (
+          <CourseCard key={index} course={course} onDelete={handleDeleteCourse} />
         ))}
       </div>
     </div>

@@ -48,10 +48,10 @@ class ClassroomGroupController{
         return apiResponse("Course added in Classroom", RESPONSE.HTTP_CREATED, {}, res);
     }
 
-    static deleteClassroomGroup(req, res, next){
+    static async deleteClassroomGroup(req, res, next){
         const userId = req.body.userId;
         const classGroupId = req.body.classGroupId;
-        const userResponse: any = SQLHelper.executeQuery(SQLHelper.getUserById(userId));
+        const userResponse: any = await SQLHelper.executeQuery(SQLHelper.getUserById(userId));
         if(userResponse === null || userResponse[0].length === 0){
             return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
@@ -59,12 +59,12 @@ class ClassroomGroupController{
         if(user.userType !== USER_TYPES.admin){
             return apiResponse("Only admins are allowed to delete groups", RESPONSE.HTTP_UNAUTHORIZED, {}, res);
         }
-        const classroomGroupResponse: any = SQLHelper.executeQuery(SQLHelper.getClassroomGroupById(classGroupId));
+        const classroomGroupResponse: any = await SQLHelper.executeQuery(SQLHelper.getClassroomGroupById(classGroupId));
         if(classroomGroupResponse === null || classroomGroupResponse[0].length === 0){
             return apiResponse("ClassroomGroup not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }
         const classroomGroup = classroomGroupResponse[0][0];
-        const classroomGroupDeleteResponse: any = SQLHelper.executeQuery(SQLHelper.deleteClassroomGroup(classGroupId, classroomGroup.classroomId, classroomGroup.courseId));
+        const classroomGroupDeleteResponse: any = await SQLHelper.executeQuery(SQLHelper.deleteClassroomGroup(classGroupId, classroomGroup.classroomId, classroomGroup.courseId));
         if(classroomGroupDeleteResponse === null){
             return apiResponse("Error in deleting ClassroomGroup", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
         }
@@ -223,18 +223,11 @@ class ClassroomGroupController{
                 attendance: [],
                 userData: {}
             };
-            const userResponse: any = await SQLHelper.executeQuery(await SQLHelper.getUserById(userIds[i]));
-            if(userResponse[0].length > 0){
-                data[i].userData = userResponse[0][0];
-            }
-            const assignmentGradesResponse: any = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupsForParentsChild(userIds[i]));
-            if(assignmentGradesResponse[0].length > 0){
-                data[i].assignmentGrades = assignmentGradesResponse[0];
-            }
-            const attendanceResponse: any = await SQLHelper.executeQuery(await SQLHelper.getAttendanceForStudent(userIds[i]));
-            if(attendanceResponse[0].length > 0){
-                data[i].attendance = attendanceResponse[0];
-            }
+            const studentAnalyticsProcedureResponse: any = await SQLHelper.executeQuery(await SQLHelper.getStudentAnalytics(userIds[i]));
+            console.log("StudentAnalyticsResponse:",studentAnalyticsProcedureResponse[0][0]);
+            data[i].userData = studentAnalyticsProcedureResponse[0][0][0];
+            data[i].assignmentGrades = studentAnalyticsProcedureResponse[0][1];
+            data[i].attendance = studentAnalyticsProcedureResponse[0][2];
         }
         return apiResponse("Student Analytics Fetched", RESPONSE.HTTP_OK, data, res);
     }

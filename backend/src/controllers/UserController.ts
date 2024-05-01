@@ -84,6 +84,8 @@ class AuthController{
         const userType = body.userType;
         const address = body.address;
         const dob = body.dob;
+        const occupation = body.occupation;
+        const studentIds = body.studentIds;
 
         const updateFields: any = {};
         if (firstName) {
@@ -94,6 +96,10 @@ class AuthController{
         }
         if (email) {
             updateFields.email = email;
+            const response: any = await SQLHelper.executeQuery(SQLHelper.emailCheckQuery(email));
+            if(response === null || response[0].length != 0){
+                return apiResponse("User email already exists", RESPONSE.HTTP_BAD_REQUEST, {email}, res);
+            }
         }
         if (password) {
             updateFields.password = password;
@@ -106,6 +112,12 @@ class AuthController{
         }
         if (dob) {
             updateFields.dob = dob;
+        }
+        if(occupation){
+            updateFields.occupation = occupation;
+        }
+        if(studentIds){
+            updateFields.studentIds = studentIds;
         }
         const checkUser: any = await SQLHelper.executeQuery(SQLHelper.getUserById(userId));
         if(checkUser === null || checkUser[0].length === 0){

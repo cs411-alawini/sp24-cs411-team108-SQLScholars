@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
-import "../css/Hamburger2.css";
+import "../css/Hamburger.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const RecordingsView = () => {
@@ -18,12 +18,15 @@ const RecordingsView = () => {
 
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const [nav_path, setPath] = useState("/homeTeacher");
 
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
-  const getRecordings = async() => {
+  const getRecordings = async () => {
     try {
-      const response = await fetch(`http://34.28.230.12/api/classroomgroup/getRecordings?classGroupId=${cgId}`);
+      const response = await fetch(
+        `http://34.28.230.12/api/classroomgroup/getRecordings?classGroupId=${cgId}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -42,6 +45,15 @@ const RecordingsView = () => {
       setUserId(parsedData.userId);
       const types = ["Admin", "Teacher", "Student", "Parent"];
       setUserType(types[parsedData.userType]);
+      if (parsedData.userType === 0) {
+        setPath("/homeAdmin");
+      } else if (parsedData.userType === 1) {
+        setPath("/homeTeacher");
+      } else if (parsedData.userType === 2) {
+        setPath("/homeStudent");
+      } else if (parsedData.userType === 3) {
+        setPath("/homeParent");
+      }
 
       getRecordings();
     } else {
@@ -53,11 +65,6 @@ const RecordingsView = () => {
     {
       id: "home",
       label: "Home",
-      path: `/homeStudent`,
-    },
-    {
-      id: "classGroup",
-      label: "ClassGroup View",
       path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
@@ -76,14 +83,9 @@ const RecordingsView = () => {
       path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
-      id: "grades",
-      label: "Grades",
-      path: `/gradesView?classGroupId=${cgId}&classroomId=${crId}`,
-    },
-    {
-        id: "recording",
-        label : "Recordings",
-        path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
+      id: "recording",
+      label: "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`,
     },
   ];
 
@@ -96,33 +98,36 @@ const RecordingsView = () => {
     setTRecordingLink("");
     setTClassDate("");
     setAddModalOpen(false);
-  }
+  };
   // Parameters - userId, classGroupId, recordingLink, classDate
-  const submitAddRecording = async() => {
+  const submitAddRecording = async () => {
     try {
-      const response = await fetch('http://34.28.230.12/api/classroomgroup/addRecording', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: userId,
-          classGroupId: cgId,
-          recordingLink: tRecordingLink,
-          classDate: tClassDate
-        }),
-      });
-    
+      const response = await fetch(
+        "http://34.28.230.12/api/classroomgroup/addRecording",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+            classGroupId: cgId,
+            recordingLink: tRecordingLink,
+            classDate: tClassDate,
+          }),
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-    
+
       const data = await response.json();
-      console.log('Recording added successfully:', data);
+      console.log("Recording added successfully:", data);
       setRecordingLink(tRecordingLink);
       setClassDate(tClassDate);
     } catch (error) {
-      console.error('Could not add recording:', error);
+      console.error("Could not add recording:", error);
     }
     setTRecordingLink("");
     setTClassDate("");
@@ -137,28 +142,31 @@ const RecordingsView = () => {
     setEditModalOpen(true);
   };
 
-  const editRecording = async(recording) => {
+  const editRecording = async (recording) => {
     try {
-      const response = await fetch('http://34.28.230.12/api/classroomgroup/editRecording', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: userId,
-          classGroupId: cgId,
-          recordingId: recordingId,
-          recordingLink: tRecordingLink,
-          classDate: tClassDate
-        }),
-      });
+      const response = await fetch(
+        "http://34.28.230.12/api/classroomgroup/editRecording",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+            classGroupId: cgId,
+            recordingId: recordingId,
+            recordingLink: tRecordingLink,
+            classDate: tClassDate,
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Recording link edited successfully:', data);
+      console.log("Recording link edited successfully:", data);
     } catch (error) {
-      console.error('Could not edit recording:', error);
+      console.error("Could not edit recording:", error);
     }
     setEditModalOpen(false);
     setRecordingId("");
@@ -172,40 +180,48 @@ const RecordingsView = () => {
     setRecordingId("");
     setTRecordingLink("");
     setTClassDate("");
-  }
+  };
 
-  const deleteRecording = async(recording) => {
+  const deleteRecording = async (recording) => {
     try {
-      const response = await fetch('http://34.28.230.12/api/classroomgroup/deleteRecording', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: userId,
-          classGroupId: cgId,
-          recordingId: recording.recordingId
-        }),
-      });
+      const response = await fetch(
+        "http://34.28.230.12/api/classroomgroup/deleteRecording",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+            classGroupId: cgId,
+            recordingId: recording.recordingId,
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Recording deleted successfully:', data);
+      console.log("Recording deleted successfully:", data);
     } catch (error) {
-      console.error('Could not delete recording:', error);
+      console.error("Could not delete recording:", error);
     }
     if (recordings.length === 1) {
-        setRecordings([]);
+      setRecordings([]);
     } else {
-        getRecordings();
+      getRecordings();
     }
   };
-  
+
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img
+          src={logo}
+          alt="Illini Logo"
+          className="logo"
+          onClick={() => navigate(nav_path)}
+        />
         <h1 className="student-title">{userType}</h1>
       </div>
       <button
@@ -232,38 +248,83 @@ const RecordingsView = () => {
         {addModalOpen && (
           <div className="modal-recordings">
             <h1 className="student-title">Add Recording</h1>
-            <span>Recording Link: </span><span><input type="text" placeholder="Enter Recording Link" value={tRecordingLink} 
-                                                onChange={(e) => setTRecordingLink(e.target.value)} className="r-add-input"></input></span>
-            <span>Class Date: </span><span><input type="date" placeholder="Enter Class Date" value={tClassDate} 
-                                                onChange={(e) => setTClassDate(e.target.value)} className="r-add-input"></input></span>
+            <span>Recording Link: </span>
+            <span>
+              <input
+                type="text"
+                placeholder="Enter Recording Link"
+                value={tRecordingLink}
+                onChange={(e) => setTRecordingLink(e.target.value)}
+                className="r-add-input"
+              ></input>
+            </span>
+            <span>Class Date: </span>
+            <span>
+              <input
+                type="date"
+                placeholder="Enter Class Date"
+                value={tClassDate}
+                onChange={(e) => setTClassDate(e.target.value)}
+                className="r-add-input"
+              ></input>
+            </span>
             <button onClick={() => cancelAddRecording()}>Cancel</button>
             <button onClick={() => submitAddRecording()}>Submit</button>
-
           </div>
         )}
 
         {addModalOpen && (
           <div className="modal-recordings">
             <h1 className="student-title">Add Recording</h1>
-            <span>Recording Link: </span><span><input type="text" placeholder="Enter Recording Link" value={tRecordingLink} 
-                                                onChange={(e) => setTRecordingLink(e.target.value)} className="r-add-input"></input></span>
-            <span>Class Date: </span><span><input type="date" placeholder="Enter Class Date" value={tClassDate} 
-                                                onChange={(e) => setTClassDate(e.target.value)} className="r-add-input"></input></span>
+            <span>Recording Link: </span>
+            <span>
+              <input
+                type="text"
+                placeholder="Enter Recording Link"
+                value={tRecordingLink}
+                onChange={(e) => setTRecordingLink(e.target.value)}
+                className="r-add-input"
+              ></input>
+            </span>
+            <span>Class Date: </span>
+            <span>
+              <input
+                type="date"
+                placeholder="Enter Class Date"
+                value={tClassDate}
+                onChange={(e) => setTClassDate(e.target.value)}
+                className="r-add-input"
+              ></input>
+            </span>
             <button onClick={() => cancelAddRecording()}>Cancel</button>
             <button onClick={() => submitAddRecording()}>Submit</button>
-
           </div>
         )}
         {editModalOpen && (
           <div className="modal-recordings">
             <h1 className="student-title">Edit Recording</h1>
-            <span>Recording Link: </span><span><input type="text" placeholder="Enter Recording Link" value={tRecordingLink} 
-                                                onChange={(e) => setTRecordingLink(e.target.value)} className="r-add-input"></input></span>
-            <span>Class Date: </span><span><input type="date" placeholder="Enter Class Date" value={tClassDate} 
-                                                onChange={(e) => setTClassDate(e.target.value)} className="r-add-input"></input></span>
+            <span>Recording Link: </span>
+            <span>
+              <input
+                type="text"
+                placeholder="Enter Recording Link"
+                value={tRecordingLink}
+                onChange={(e) => setTRecordingLink(e.target.value)}
+                className="r-add-input"
+              ></input>
+            </span>
+            <span>Class Date: </span>
+            <span>
+              <input
+                type="date"
+                placeholder="Enter Class Date"
+                value={tClassDate}
+                onChange={(e) => setTClassDate(e.target.value)}
+                className="r-add-input"
+              ></input>
+            </span>
             <button onClick={() => cancelEditRecording()}>Cancel</button>
             <button onClick={() => editRecording()}>Submit</button>
-
           </div>
         )}
         <div className="class-group-table1">
@@ -272,44 +333,52 @@ const RecordingsView = () => {
               <tr>
                 <th>Recording Link</th>
                 <th>Recording Date</th>
-        
-                {userType === "Teacher" ? (
-                  <th>Edit Recording?</th>
-                ) : null}
-                {userType === "Teacher" ? (
-                  <th>Delete Recording?</th>
-                ) : null}
+
+                {userType === "Teacher" ? <th>Edit Recording?</th> : null}
+                {userType === "Teacher" ? <th>Delete Recording?</th> : null}
               </tr>
             </thead>
             <tbody>
-              {recordings
-                .map((recording, index) => (
-                  <tr key={index}>
-                    <td><a href={`http://${recording.recordingLink}`} target="_blank" rel="noopener noreferrer">Click here</a></td>
-                    <td>{recording.classDate}</td>
-                    {userType === "Teacher" ? (
-                      <td style={{ textAlign: "center" }}>
-                        <button onClick={() => openEditModal(recording)}>
-                          Edit Recording
-                        </button>
-                      </td>
-                    ) : null}
-                    {userType === "Teacher" ? (
-                      <td style={{ textAlign: "center" }}>
-                        <button onClick={() => deleteRecording(recording)}>
-                          Delete Recording
-                        </button>
-                      </td>
-                    ) : null}
-                  </tr>
-                ))}
+              {recordings.map((recording, index) => (
+                <tr key={index}>
+                  <td>
+                    <a
+                      href={`http://${recording.recordingLink}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Click here
+                    </a>
+                  </td>
+                  <td>{recording.classDate}</td>
+                  {userType === "Teacher" ? (
+                    <td style={{ textAlign: "center" }}>
+                      <button onClick={() => openEditModal(recording)}>
+                        Edit Recording
+                      </button>
+                    </td>
+                  ) : null}
+                  {userType === "Teacher" ? (
+                    <td style={{ textAlign: "center" }}>
+                      <button onClick={() => deleteRecording(recording)}>
+                        Delete Recording
+                      </button>
+                    </td>
+                  ) : null}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
         <div>
-          {(userType === "Teacher") && (
-            <div style={{ marginTop: "20px", width: "100%", textAlign: "center" }}>
-              <button className="search-button" onClick={() => setAddModalOpen(true)}>
+          {userType === "Teacher" && (
+            <div
+              style={{ marginTop: "20px", width: "100%", textAlign: "center" }}
+            >
+              <button
+                className="search-button"
+                onClick={() => setAddModalOpen(true)}
+              >
                 Add New Recording
               </button>
             </div>

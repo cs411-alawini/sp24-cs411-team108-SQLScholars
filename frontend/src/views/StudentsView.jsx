@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
-import {format} from 'date-fns';
-import "../css/Hamburger2.css";
+import { format } from "date-fns";
+import "../css/Hamburger.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const StudentView = () => {
@@ -17,6 +17,7 @@ const StudentView = () => {
   const [params] = useSearchParams();
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
+  const [nav_path, setPath] = useState("/homeTeacher");
   const [modalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -26,11 +27,15 @@ const StudentView = () => {
       return;
     }
     const parsedData = JSON.parse(userData);
-    console.log(`Fetching students using userId: ${parsedData.userId} and classGroupId: ${cgId}`);
-    
+    console.log(
+      `Fetching students using userId: ${parsedData.userId} and classGroupId: ${cgId}`
+    );
+
     const fetchStudents = async () => {
       try {
-        const response = await fetch(`http://34.28.230.12/api/classroomgroup/getDetails?classGroupId=${cgId}&userId=${parsedData.userId}`);
+        const response = await fetch(
+          `http://34.28.230.12/api/classroomgroup/getDetails?classGroupId=${cgId}&userId=${parsedData.userId}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -45,15 +50,19 @@ const StudentView = () => {
     };
 
     fetchStudents();
-    
+
     if (parsedData.userType === 0) {
       setUserType("Admin");
+      setPath("/homeAdmin");
     } else if (parsedData.userType === 1) {
       setUserType("Teacher");
+      setPath("/homeTeacher");
     } else if (parsedData.userType === 2) {
       setUserType("Student");
+      setPath("/homeStudent");
     } else if (parsedData.userType === 3) {
       setUserType("Parent");
+      setPath("/homeParent");
     }
   }, []);
 
@@ -61,11 +70,6 @@ const StudentView = () => {
     {
       id: "home",
       label: "Home",
-      path: `/homeStudent`,
-    },
-    {
-      id: "classGroup",
-      label: "ClassGroup View",
       path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
@@ -84,14 +88,9 @@ const StudentView = () => {
       path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
-      id: "grades",
-      label: "Grades",
-      path: `/gradesView?classGroupId=${cgId}&classroomId=${crId}`,
-    },
-    {
       id: "recording",
-      label : "Recordings",
-      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
+      label: "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`,
     },
   ];
 
@@ -99,31 +98,36 @@ const StudentView = () => {
     setIsActive(false);
     navigate(path);
   };
-  
-  const deleteStudent = async(student) => {
+
+  const deleteStudent = async (student) => {
     try {
-      const response = await fetch('http://34.28.230.12/api/classroomgroup/removeUser', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: student.userId,
-          classGroupId: student.classGroupId,
-        }),
-      });
-  
+      const response = await fetch(
+        "http://34.28.230.12/api/classroomgroup/removeUser",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: student.userId,
+            classGroupId: student.classGroupId,
+          }),
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const data = await response.json();
-      console.log('Student removed successfully:', data);
-      const updatedStudents = students.filter(s => s.userId !== student.userId);
+      console.log("Student removed successfully:", data);
+      const updatedStudents = students.filter(
+        (s) => s.userId !== student.userId
+      );
       setStudents(updatedStudents);
       // Handle success response here
     } catch (error) {
-      console.error('Could not remove student:', error);
+      console.error("Could not remove student:", error);
       // Handle error here
     }
   };
@@ -139,7 +143,7 @@ const StudentView = () => {
     setIsModalOpen(false);
   };
 
-  const searchStudent = async() => {
+  const searchStudent = async () => {
     try {
       let userNum = null;
       if (userType === "Admin") {
@@ -151,7 +155,9 @@ const StudentView = () => {
       } else if (userType === "Parent") {
         userNum = 3; // Assuming Parent userType has a userNum of 4
       }
-      const response = await fetch(`http://34.28.230.12/api/user/search?query=${userQuery}&userType=${userNum}`);
+      const response = await fetch(
+        `http://34.28.230.12/api/user/search?query=${userQuery}&userType=${userNum}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -161,26 +167,29 @@ const StudentView = () => {
       console.error("Could not fetch students:", error);
     }
   };
-  const addStudent = async(student, index) => {
+  const addStudent = async (student, index) => {
     try {
-      const response = await fetch('http://34.28.230.12/api/classroomgroup/addUser', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: student.userId,
-          classGroupId: cgId,
-        }),
-      });
-  
+      const response = await fetch(
+        "http://34.28.230.12/api/classroomgroup/addUser",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: student.userId,
+            classGroupId: cgId,
+          }),
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const data = await response.json();
-      console.log('Student added successfully:', data);
-      const updatedStudents = [...students]
+      console.log("Student added successfully:", data);
+      const updatedStudents = [...students];
       updatedStudents.push(student);
       setStudents(updatedStudents);
       const updatedDisabled = [...disabledButtons];
@@ -188,14 +197,19 @@ const StudentView = () => {
       setDisabledButtons(updatedDisabled);
       // Handle success response here
     } catch (error) {
-      console.error('Could not add student:', error);
+      console.error("Could not add student:", error);
     }
   };
 
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img
+          src={logo}
+          alt="Illini Logo"
+          className="logo"
+          onClick={() => navigate(nav_path)}
+        />
         <h1 className="student-title">{userType}</h1>
       </div>
       <button
@@ -236,7 +250,7 @@ const StudentView = () => {
             </thead>
             <tbody>
               {students
-                .filter(student => starStudents.includes(student.userId)) // Filter out students not in starStudents
+                .filter((student) => starStudents.includes(student.userId)) // Filter out students not in starStudents
                 .map((student, index) => (
                   <tr key={index}>
                     <td>{student.firstName}</td>
@@ -275,7 +289,11 @@ const StudentView = () => {
             </thead>
             <tbody>
               {students
-                .filter(student => !starStudents.includes(student.userId) && !belowAvgStudents.includes(student.userId)) // Filter out students not in starStudents and belowAvgStudents
+                .filter(
+                  (student) =>
+                    !starStudents.includes(student.userId) &&
+                    !belowAvgStudents.includes(student.userId)
+                ) // Filter out students not in starStudents and belowAvgStudents
                 .map((student, index) => (
                   <tr key={index}>
                     <td>{student.firstName}</td>
@@ -314,7 +332,7 @@ const StudentView = () => {
             </thead>
             <tbody>
               {students
-                .filter(student => belowAvgStudents.includes(student.userId)) // Filter out students not in starStudents and belowAvgStudents
+                .filter((student) => belowAvgStudents.includes(student.userId)) // Filter out students not in starStudents and belowAvgStudents
                 .map((student, index) => (
                   <tr key={index}>
                     <td>{student.firstName}</td>
@@ -337,15 +355,21 @@ const StudentView = () => {
         </div>
         {modalOpen && (
           <div className="modal-students">
-            <h1 className="modal-title">
-              Search For User
-            </h1>
-            <span style={{width: "100%", display:"flex", justifyContent: "center"}}>
-              <input type="text"
+            <h1 className="modal-title">Search For User</h1>
+            <span
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <input
+                type="text"
                 placeholder="Enter User"
                 value={userQuery}
                 onChange={(e) => setUserQuery(e.target.value)}
-                className="search-bar"></input>
+                className="search-bar"
+              ></input>
               <button className="search-button" onClick={() => searchStudent()}>
                 Search
               </button>
@@ -366,7 +390,10 @@ const StudentView = () => {
                 </thead>
                 <tbody>
                   {queryList
-                    .filter(student => !students.some(s => s.userId === student.userId))
+                    .filter(
+                      (student) =>
+                        !students.some((s) => s.userId === student.userId)
+                    )
                     .map((student, index) => (
                       <tr key={index}>
                         <td>{student.firstName}</td>
@@ -376,7 +403,10 @@ const StudentView = () => {
                         <td>{student.email}</td>
                         {userType === "Teacher" || userType === "Admin" ? (
                           <td style={{ textAlign: "center" }}>
-                            <button disabled={disabledButtons.includes(index)} onClick={() => addStudent(student, index)}>
+                            <button
+                              disabled={disabledButtons.includes(index)}
+                              onClick={() => addStudent(student, index)}
+                            >
                               Add Student
                             </button>
                           </td>
@@ -390,14 +420,14 @@ const StudentView = () => {
           </div>
         )}
         {(userType === "Teacher" || userType === "Admin") && (
-            <div
-              style={{ marginTop: "20px", width: "100%", textAlign: "center" }}
-            >
-              <button className="search-button" onClick={() => addStudentModal()}>
-                Add New Student
-              </button>
-            </div>
-          )}
+          <div
+            style={{ marginTop: "20px", width: "100%", textAlign: "center" }}
+          >
+            <button className="search-button" onClick={() => addStudentModal()}>
+              Add New Student
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

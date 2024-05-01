@@ -17,6 +17,7 @@ const AssignmentView = () => {
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
   const classGroupId = cgId;
+  const [nav_path, setPath] = useState("/homeTeacher");
   const options = [
     {
       id: "home",
@@ -40,8 +41,8 @@ const AssignmentView = () => {
     },
     {
       id: "recording",
-      label : "Recordings",
-      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
+      label: "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`,
     },
   ];
 
@@ -54,6 +55,15 @@ const AssignmentView = () => {
     const userData = localStorage.getItem("userData");
     if (userData) {
       const parsedData = JSON.parse(userData);
+      if (parsedData.userType == 0) {
+        setPath("/homeAdmin");
+      } else if (parsedData.userType == 1) {
+        setPath("/homeTeacher");
+      } else if (parsedData.userType == 2) {
+        setPath("/homeStudent");
+      } else if (parsedData.userType == 3) {
+        setPath("/homeParent");
+      }
       const types = ["Admin", "Teacher", "Student", "Parent"];
       setUserType(types[parsedData.userType]);
     } else {
@@ -84,14 +94,8 @@ const AssignmentView = () => {
     if (action === "create" && (!googleFormLink || !maximumGrade)) {
       alert("Please fill all required fields for creating an assignment.");
       return;
-    } else if (
-      action === "edit" &&
-      (!assignmentId || !googleFormLink || !maximumGrade)
-    ) {
+    } else if (action === "edit" && (!googleFormLink || !maximumGrade)) {
       alert("Please fill all required fields for editing an assignment.");
-      return;
-    } else if (action === "delete" && !assignmentId) {
-      alert("Please enter the Assignment ID to delete.");
       return;
     }
     const userData = localStorage.getItem("userData");
@@ -134,8 +138,9 @@ const AssignmentView = () => {
     setMaxGrade("");
   };
 
-  const handleModalOpen = (action) => {
+  const handleModalOpen = (action, ass_id) => {
     setAction(action);
+    setAssignmentId(ass_id);
     setModalOpen(true);
   };
 
@@ -143,6 +148,7 @@ const AssignmentView = () => {
     localStorage.removeItem("userData");
     navigate("/login");
   };
+
   return (
     <div className="h-container">
       <div className="header">
@@ -150,11 +156,11 @@ const AssignmentView = () => {
           src={logo}
           alt="Illini Logo"
           className="logo"
-          onClick={() => navigate("/homeStudent")}
+          onClick={() => navigate(nav_path)}
         />
         <h1 className="student-title">{userType}</h1>
         <header className="app-header">
-          <div className="container" style={{ marginLeft: "500px" }}>
+          <div className="container" style={{ marginLeft: "1200px" }}>
             <button
               type="button"
               className="logout-button"
@@ -198,6 +204,8 @@ const AssignmentView = () => {
                 <th>Maximum Grade Possible</th>
                 <th>Maximum Student Grade</th>
                 <th>Check Grade</th>
+                {userType === "Teacher" && <th>Edit</th>}
+                {userType === "Teacher" && <th>Delete</th>}
               </tr>
             </thead>
             <tbody>
@@ -225,6 +233,28 @@ const AssignmentView = () => {
                       View Grade
                     </button>
                   </td>
+                  {userType === "Teacher" && (
+                    <td>
+                      <button
+                        onClick={() =>
+                          handleModalOpen("edit", data.assignmentId)
+                        }
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  )}
+                  {userType === "Teacher" && (
+                    <td>
+                      <button
+                        onClick={() =>
+                          handleModalOpen("delete", data.assignmentId)
+                        }
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -233,15 +263,7 @@ const AssignmentView = () => {
             <div
               style={{ marginTop: "20px", maxWidth: "600px", width: "100%" }}
             >
-              <button onClick={() => handleModalOpen("edit")}>
-                Edit Assignment
-              </button>
-              <button onClick={() => handleModalOpen("create")}>
-                Add New Assignment
-              </button>
-              <button onClick={() => handleModalOpen("delete")}>
-                Delete Assignment
-              </button>
+              <button onClick={() => handleModalOpen("create")}>Add</button>
             </div>
           )}
         </div>
@@ -266,14 +288,6 @@ const AssignmentView = () => {
                 onChange={(e) => setMaxGrade(e.target.value)}
               />
             </>
-          )}
-          {action !== "create" && (
-            <input
-              type="text"
-              placeholder="Enter Assignment ID"
-              value={assignmentId}
-              onChange={(e) => setAssignmentId(e.target.value)}
-            />
           )}
           <button onClick={() => handleAssignmentAction(action)}>Submit</button>
           <button onClick={() => setModalOpen(false)}>Cancel</button>

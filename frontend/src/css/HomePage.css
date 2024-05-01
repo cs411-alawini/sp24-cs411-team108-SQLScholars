@@ -45,7 +45,7 @@
   }
   
   .card-header img {
-    height: 50px; /* Ensure the logo has a fixed height */
+    height: 40px; /* Ensure the logo has a fixed height */
   }
   
   .card-body {
@@ -125,7 +125,7 @@
   }
   
   .chart-container {
-    width: 90%;  /* Set the width as needed */
+    width: 100%;  /* Set the width as needed */
     height: 300px; /* Set the height as needed */
     padding-left: 10%;
   }
@@ -150,7 +150,8 @@
   
   .three-dots-icon {
     width: 20px; /* Adjust size as needed */
-    height: 5px; /* Adjust size as needed */
+    height: 25px !important;
+    margin-top: 75%;
   }
 
   .menu-content {

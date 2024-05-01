@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
-import {format} from 'date-fns';
 import "../css/Hamburger2.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -15,9 +14,29 @@ const StudentView = () => {
   const [disabledButtons, setDisabledButtons] = useState([]);
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const [nav_path, setPath] = useState("/homeTeacher");
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
-  const [modalOpen, setIsModalOpen] = useState(false);
+  const [sModalOpen, setIsSModalOpen] = useState(false);
+  const [tModalOpen, setIsTModalOpen] = useState(false);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      if (parsedData.userType === 0) {
+        setPath("/homeAdmin");
+      } else if (parsedData.userType === 1) {
+        setPath("/homeTeacher");
+      } else if (parsedData.userType === 2) {
+        setPath("/homeStudent");
+      } else if (parsedData.userType === 3) {
+        setPath("/homeParent");
+      }
+    } else {
+      console.error("User data not found in local storage");
+    }
+  }, []);
 
   useEffect(() => {
     const userData = localStorage.getItem("userData");
@@ -59,16 +78,6 @@ const StudentView = () => {
 
   const options = [
     {
-      id: "home",
-      label: "Home",
-      path: `/homeStudent`,
-    },
-    {
-      id: "classGroup",
-      label: "ClassGroup View",
-      path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
-    },
-    {
       id: "attendance",
       label: "Attendance",
       path: `/attendanceView?classGroupId=${cgId}&classroomId=${crId}`,
@@ -100,7 +109,7 @@ const StudentView = () => {
     navigate(path);
   };
   
-  const deleteStudent = async(student) => {
+  const deleteUser = async(student) => {
     try {
       const response = await fetch('http://34.28.230.12/api/classroomgroup/removeUser', {
         method: 'POST',
@@ -129,39 +138,41 @@ const StudentView = () => {
   };
 
   const addStudentModal = () => {
-    setIsModalOpen(true);
+    setIsSModalOpen(true);
   };
 
-  const closeModal = () => {
+  const addTeacherModal = () => {
+    setIsTModalOpen(true);
+  }
+
+  const closeSModal = () => {
     setUserQuery(null);
     setQueryList([]);
     setDisabledButtons([]);
-    setIsModalOpen(false);
+    setIsSModalOpen(false);
   };
 
-  const searchStudent = async() => {
+  const closeTModal = () => {
+    setUserQuery(null);
+    setQueryList([]);
+    setDisabledButtons([]);
+    setIsTModalOpen(false);
+  }
+
+  const searchStudent = async(num) => {
     try {
-      let userNum = null;
-      if (userType === "Admin") {
-        userNum = 0;
-      } else if (userType === "Teacher") {
-        userNum = 1;
-      } else if (userType === "Student") {
-        userNum = 2;
-      } else if (userType === "Parent") {
-        userNum = 3; // Assuming Parent userType has a userNum of 4
-      }
-      const response = await fetch(`http://34.28.230.12/api/user/search?query=${userQuery}&userType=${userNum}`);
+      const response = await fetch(`http://34.28.230.12/api/user/search?query=${userQuery}&userType=${num}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       setQueryList(data.data.users);
+      console.log(data.data.users)
     } catch (error) {
       console.error("Could not fetch students:", error);
     }
   };
-  const addStudent = async(student, index) => {
+  const addUser = async(user, index) => {
     try {
       const response = await fetch('http://34.28.230.12/api/classroomgroup/addUser', {
         method: 'POST',
@@ -169,7 +180,7 @@ const StudentView = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: student.userId,
+          userId: user.userId,
           classGroupId: cgId,
         }),
       });
@@ -181,7 +192,7 @@ const StudentView = () => {
       const data = await response.json();
       console.log('Student added successfully:', data);
       const updatedStudents = [...students]
-      updatedStudents.push(student);
+      updatedStudents.push(user);
       setStudents(updatedStudents);
       const updatedDisabled = [...disabledButtons];
       updatedDisabled.push(index);
@@ -195,8 +206,9 @@ const StudentView = () => {
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
-        <h1 className="student-title">{userType}</h1>
+        <img src={logo} alt="Illini Logo" className="logo" onClick={() => navigate(nav_path)} />
+        <h1 className="student-title1" style={{marginLeft: "10px"}}>{userType}</h1>
+        
       </div>
       <button
         className={`hamburger-icon ${isActive ? "active" : ""}`}
@@ -218,7 +230,46 @@ const StudentView = () => {
         </div>
       )}
       <div className="student-content">
-        <h2 className="student-title">Star Students</h2>
+      <h2 className="student-title1">Teachers</h2>
+        <div className="class-group-table1">
+          <table>
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Address</th>
+                <th>Date of Birth</th>
+                <th>Email</th>
+                <th>Joined At</th>
+                {userType === "Admin" ? (
+                  <th>Delete Teacher?</th>
+                ) : null}
+              </tr>
+            </thead>
+            <tbody>
+              {students
+                .filter(student => student.userType == 1) // Filter out students not in starStudents
+                .map((student, index) => (
+                  <tr key={index}>
+                    <td>{student.firstName}</td>
+                    <td>{student.lastName}</td>
+                    <td>{student.address}</td>
+                    <td>{student.dob}</td>
+                    <td>{student.email}</td>
+                    <td>{student.userJoinedAt}</td>
+                    {userType === "Admin" ? (
+                      <td style={{ textAlign: "center" }}>
+                        <button onClick={() => deleteUser(student)}>
+                          Delete Teacher
+                        </button>
+                      </td>
+                    ) : null}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+        <h2 className="student-title1">Star Students</h2>
         <div className="class-group-table1">
           <table>
             <thead>
@@ -247,7 +298,7 @@ const StudentView = () => {
                     <td>{student.userJoinedAt}</td>
                     {userType === "Teacher" || userType === "Admin" ? (
                       <td style={{ textAlign: "center" }}>
-                        <button onClick={() => deleteStudent(student)}>
+                        <button onClick={() => deleteUser(student)}>
                           Delete Student
                         </button>
                       </td>
@@ -257,7 +308,7 @@ const StudentView = () => {
             </tbody>
           </table>
         </div>
-        <h2 className="student-title">Regular Students</h2>
+        <h2 className="student-title1">Regular Students</h2>
         <div className="class-group-table1">
           <table>
             <thead>
@@ -275,7 +326,9 @@ const StudentView = () => {
             </thead>
             <tbody>
               {students
-                .filter(student => !starStudents.includes(student.userId) && !belowAvgStudents.includes(student.userId)) // Filter out students not in starStudents and belowAvgStudents
+                .filter(student => !starStudents.includes(student.userId) 
+                  && !belowAvgStudents.includes(student.userId)
+                  && student.userType === 2) // Filter out students not in starStudents and belowAvgStudents
                 .map((student, index) => (
                   <tr key={index}>
                     <td>{student.firstName}</td>
@@ -286,7 +339,7 @@ const StudentView = () => {
                     <td>{student.userJoinedAt}</td>
                     {userType === "Teacher" || userType === "Admin" ? (
                       <td style={{ textAlign: "center" }}>
-                        <button onClick={() => deleteStudent(student)}>
+                        <button onClick={() => deleteUser(student)}>
                           Delete Student
                         </button>
                       </td>
@@ -296,7 +349,7 @@ const StudentView = () => {
             </tbody>
           </table>
         </div>
-        <h2 className="student-title">Below Average Students</h2>
+        <h2 className="student-title1">Below Average Students</h2>
         <div className="class-group-table1">
           <table>
             <thead>
@@ -325,7 +378,7 @@ const StudentView = () => {
                     <td>{student.userJoinedAt}</td>
                     {userType === "Teacher" || userType === "Admin" ? (
                       <td style={{ textAlign: "center" }}>
-                        <button onClick={() => deleteStudent(student)}>
+                        <button onClick={() => deleteUser(student)}>
                           Delete Student
                         </button>
                       </td>
@@ -335,7 +388,7 @@ const StudentView = () => {
             </tbody>
           </table>
         </div>
-        {modalOpen && (
+        {sModalOpen && (
           <div className="modal-students">
             <h1 className="modal-title">
               Search For User
@@ -346,7 +399,7 @@ const StudentView = () => {
                 value={userQuery}
                 onChange={(e) => setUserQuery(e.target.value)}
                 className="search-bar"></input>
-              <button className="search-button" onClick={() => searchStudent()}>
+              <button className="search-button" onClick={() => searchStudent(2)}>
                 Search
               </button>
             </span>
@@ -376,7 +429,7 @@ const StudentView = () => {
                         <td>{student.email}</td>
                         {userType === "Teacher" || userType === "Admin" ? (
                           <td style={{ textAlign: "center" }}>
-                            <button disabled={disabledButtons.includes(index)} onClick={() => addStudent(student, index)}>
+                            <button disabled={disabledButtons.includes(index)} onClick={() => addUser(student, index)}>
                               Add Student
                             </button>
                           </td>
@@ -386,18 +439,75 @@ const StudentView = () => {
                 </tbody>
               </table>
             </div>
-            <button onClick={() => closeModal()}>Done</button>
+            <button style={{marginTop:"2%"}} onClick={() => closeSModal()}>Done</button>
           </div>
         )}
-        {(userType === "Teacher" || userType === "Admin") && (
-            <div
-              style={{ marginTop: "20px", width: "100%", textAlign: "center" }}
-            >
-              <button className="search-button" onClick={() => addStudentModal()}>
-                Add New Student
+        {tModalOpen && (
+          <div className="modal-students">
+            <h1 className="modal-title">
+              Search For User
+            </h1>
+            <span style={{width: "100%", display:"flex", justifyContent: "center"}}>
+              <input type="text"
+                placeholder="Enter User"
+                value={userQuery}
+                onChange={(e) => setUserQuery(e.target.value)}
+                className="search-bar"></input>
+              <button className="search-button" onClick={() => searchStudent(1)}>
+                Search
               </button>
+            </span>
+            <div className="class-group-table1">
+              <table className="add-student-table">
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Address</th>
+                    <th>Date of Birth</th>
+                    <th>Email</th>
+                    {userType === "Admin" ? (
+                      <th>Add Teacher?</th>
+                    ) : null}
+                  </tr>
+                </thead>
+                <tbody>
+                  {queryList
+                    .filter(teacher => teacher.userType == 1 && !students.some(s => s.userId === teacher.userId))
+                    .map((teacher, index) => (
+                      <tr key={index}>
+                        <td>{teacher.firstName}</td>
+                        <td>{teacher.lastName}</td>
+                        <td>{teacher.address}</td>
+                        <td>{teacher.dob}</td>
+                        <td>{teacher.email}</td>
+                        {userType === "Admin" ? (
+                          <td style={{ textAlign: "center" }}>
+                            <button disabled={disabledButtons.includes(index)} onClick={() => addUser(teacher, index)}>
+                              Add Teacher
+                            </button>
+                          </td>
+                        ) : null}
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
             </div>
+            <button style={{marginTop:"2%"}} onClick={() => closeTModal()}>Done</button>
+          </div>
+        )}
+        <div className="button-container">
+          {(userType === "Teacher" || userType === "Admin") && (
+            <button className="search-button" onClick={() => addStudentModal()}>
+              Add New Student
+            </button>
           )}
+          {userType === "Admin" && (
+            <button className="search-button" onClick={() => addTeacherModal()}>
+              Add New Teacher
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

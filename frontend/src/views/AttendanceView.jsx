@@ -17,6 +17,8 @@ const AttendanceView = () => {
   const [params] = useSearchParams();
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
+  const [nav_path, setPath] = useState("/homeTeacher");
+
   const options = [
     {
       id: "home",
@@ -40,8 +42,8 @@ const AttendanceView = () => {
     },
     {
       id: "recording",
-      label : "Recordings",
-      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
+      label: "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`,
     },
   ];
 
@@ -56,6 +58,15 @@ const AttendanceView = () => {
       const parsedData = JSON.parse(userData);
       const types = ["Admin", "Teacher", "Student", "Parent"];
       setUserType(types[parsedData.userType]);
+      if (parsedData.userType === 0) {
+        setPath("/homeAdmin");
+      } else if (parsedData.userType === 1) {
+        setPath("/homeTeacher");
+      } else if (parsedData.userType === 2) {
+        setPath("/homeStudent");
+      } else if (parsedData.userType === 3) {
+        setPath("/homeParent");
+      }
     } else {
       console.error("User data not found in local storage");
     }
@@ -79,7 +90,10 @@ const AttendanceView = () => {
   };
 
   const handleAttendanceAction = async (currentAction) => {
-    if (!userId || !attendanceDate || !isPresent) {
+    if (
+      currentAction === "create" &&
+      (!userId || !attendanceDate || !isPresent)
+    ) {
       alert("Please fill all fields");
       return;
     }
@@ -117,14 +131,17 @@ const AttendanceView = () => {
     setIsPresent("");
   };
 
-  const handleModalOpen = (action) => {
+  const handleModalOpen = (action, uid, dt) => {
     setAction(action);
+    setUserId(uid);
+    console.log("date:", dt);
+    setAttendanceDate(dt);
     setModalOpen(true);
   };
 
   const logoutUser = () => {
     localStorage.removeItem("userData");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -134,11 +151,11 @@ const AttendanceView = () => {
           src={logo}
           alt="Illini Logo"
           className="logo"
-          onClick={() => navigate("/homeStudent")}
+          onClick={() => navigate(nav_path)}
         />
         <h1 className="student-title">{userType}</h1>
         <header className="app-header">
-          <div className="container" style={{ marginLeft: "500px" }}>
+          <div className="container" style={{ marginLeft: "1200px" }}>
             <button
               type="button"
               className="logout-button"
@@ -181,6 +198,7 @@ const AttendanceView = () => {
                 <th>Last Name</th>
                 <th>Date</th>
                 <th>Is Present</th>
+                <th>Edit</th>
               </tr>
             </thead>
             <tbody>
@@ -196,6 +214,25 @@ const AttendanceView = () => {
                     })}
                   </td>
                   <td>{data.isPresent ? "Yes" : "No"}</td>
+                  {(userType === "Teacher" || userType === "Admin") && (
+                    <td>
+                      <button
+                        onClick={() => {
+                          console.log("date:", data.attendanceDate);
+                          // const date = new Date(timestamp).toISOString().split('T')[0];
+                          handleModalOpen(
+                            "update",
+                            data.studentId,
+                            new Date(data.attendanceDate)
+                              .toISOString()
+                              .split("T")[0]
+                          );
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -204,10 +241,7 @@ const AttendanceView = () => {
             <div
               style={{ marginTop: "20px", maxWidth: "600px", width: "100%" }}
             >
-              <button onClick={() => handleModalOpen("update")}>
-                Edit Attendance
-              </button>
-              <button onClick={() => handleModalOpen("create")}>
+              <button onClick={() => handleModalOpen("create", "", "")}>
                 Add New Attendance
               </button>
             </div>
@@ -220,20 +254,24 @@ const AttendanceView = () => {
           <h2>{`${
             action.charAt(0).toUpperCase() + action.slice(1)
           } Attendance`}</h2>
+          {action === "create" && (
+            <>
+              <input
+                type="text"
+                placeholder="Enter User ID"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+              />
+              <input
+                type="date"
+                value={attendanceDate}
+                onChange={(e) => setAttendanceDate(e.target.value)}
+              />
+            </>
+          )}
           <input
             type="text"
-            placeholder="Enter User ID"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-          />
-          <input
-            type="date"
-            value={attendanceDate}
-            onChange={(e) => setAttendanceDate(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Is the user present? (Yes/No)"
+            placeholder="Present?(Yes/No)"
             value={isPresent}
             onChange={(e) => setIsPresent(e.target.value)}
           />

@@ -15,6 +15,11 @@ const EditClassGroupPage = () => {
   const uId = parsedData.userId;
   const [statusMessage, setStatusMessage] = useState("");
 
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/");
+  };
+
   useEffect(() => {
     const classGroupId = params.get("classGroupId");
     // Fetch the details of the ClassroomGroup from the server
@@ -27,6 +32,8 @@ const EditClassGroupPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+
   
     // Reset the status message on new submission attempt
     setStatusMessage("");
@@ -68,6 +75,15 @@ const EditClassGroupPage = () => {
   }
 
   return (
+    <div>
+      <header className="app-header">
+        <span style={{fontWeight: "550", fontSize: "20px"}}>Administrator</span>
+        <div className="container">
+          <button type="button" className="logout-button" onClick={logoutUser}>
+            Logout
+          </button>
+        </div>
+      </header>
     <div className='form-container'>
       <form onSubmit={handleSubmit}>
       <h2>Edit Classroom Group</h2>
@@ -103,6 +119,7 @@ const EditClassGroupPage = () => {
         <button type="submit">Save Changes</button>
         {statusMessage && <p>{statusMessage}</p>} 
       </form>
+    </div>
     </div>
   );
 };

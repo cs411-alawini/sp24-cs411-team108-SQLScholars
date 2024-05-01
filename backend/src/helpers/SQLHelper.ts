@@ -63,7 +63,7 @@ class SQLHelper{
         return `SELECT * FROM Users where (firstName LIKE "%${searchString}%" OR lastName LIKE "%${searchString}%" OR email LIKE "%${searchString}%") AND userType = ${userType};`;
     }
     
-    static getClassrooms(count: boolean, LIMIT: number = 1){
+    static getClassrooms(count: boolean, LIMIT: number = 10){
         if(count){
             return `SELECT COUNT(*) as count FROM Classrooms;`;
         }
@@ -80,7 +80,7 @@ class SQLHelper{
         return `UPDATE Classrooms SET className="${className}" WHERE classroomId = "${classroomId}";`;
     }
 
-    static getCourses(count: boolean, LIMIT: number = 1){
+    static getCourses(count: boolean, LIMIT: number = 10){
         if(count){
             return `SELECT COUNT(*) as count FROM Courses;`;
         }
@@ -117,8 +117,11 @@ class SQLHelper{
     static getAttendanceForStudent(userId){
         return `SELECT * FROM Attendance where studentId = "${userId}";`;
     }
+    static getStudentAnalytics(userId){
+        return `CALL FetchStudentAnalytics("${userId}");`;
+    }
     static getAllClassroomGroupsForAdmin(){
-        return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by createdAt DESC;`;
+        return `SELECT * FROM ClassroomGroups NATURAL JOIN Classrooms NATURAL JOIN Courses order by createdAt DESC LIMIT 10;`;
     }
     static getClassroomGroupToppers(){
         return `select g.classGroupId, u.userId as topperUserId, u.firstName AS topperFirstName, u.lastName AS topperLastName, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a NATURAL JOIN Grades g NATURAL JOIN Users u group by g.classGroupId, u.userId having (g.classGroupId, topperAverage) IN (select g.classGroupId, Round(max(g.grade/a.maximumGrade*100), 2) as topperAverage from Assignment a JOIN Grades g on a.assignmentId=g.assignmentId group by g.classGroupId) order by g.classGroupId;`;

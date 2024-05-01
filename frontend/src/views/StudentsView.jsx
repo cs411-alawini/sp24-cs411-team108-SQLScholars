@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import {format} from 'date-fns';
-import "../css/Hamburger.css";
+import "../css/Hamburger2.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const StudentView = () => {
@@ -219,7 +219,7 @@ const StudentView = () => {
       )}
       <div className="student-content">
         <h2 className="student-title">Star Students</h2>
-        <div className="class-group-table">
+        <div className="class-group-table1">
           <table>
             <thead>
               <tr>
@@ -258,7 +258,7 @@ const StudentView = () => {
           </table>
         </div>
         <h2 className="student-title">Regular Students</h2>
-        <div className="class-group-table">
+        <div className="class-group-table1">
           <table>
             <thead>
               <tr>
@@ -297,7 +297,7 @@ const StudentView = () => {
           </table>
         </div>
         <h2 className="student-title">Below Average Students</h2>
-        <div className="class-group-table">
+        <div className="class-group-table1">
           <table>
             <thead>
               <tr>
@@ -350,7 +350,7 @@ const StudentView = () => {
                 Search
               </button>
             </span>
-            <div className="class-group-table">
+            <div className="class-group-table1">
               <table className="add-student-table">
                 <thead>
                   <tr>

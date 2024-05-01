@@ -54,8 +54,8 @@ const prepareAttendanceData = (attendance) => {
     if(attendance.length === 0) {
       return {};
     }
-    const presentDays = attendance.filter(item => item.isPresent === 1).length;
-    const absentDays = attendance.filter(item => item.isPresent === 0).length;
+    const presentDays = attendance.filter(item => item.userAttendance === 1).length;
+    const absentDays = attendance.filter(item => item.userAttendance === 0).length;
     if(presentDays === 0 && absentDays === 0) {
       return {};
     }

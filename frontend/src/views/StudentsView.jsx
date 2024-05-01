@@ -198,7 +198,7 @@ const StudentView = () => {
     <div className="h-container">
       <div className="header">
         <img src={logo} alt="Illini Logo" className="logo" />
-        <h1 className="student-title">{userType}</h1>
+        <h1 className="student-title1" style={{marginLeft: "10px"}}>{userType}</h1>
         
       </div>
       <button
@@ -221,7 +221,7 @@ const StudentView = () => {
         </div>
       )}
       <div className="student-content">
-      <h2 className="student-title">Teachers</h2>
+      <h2 className="student-title1">Teachers</h2>
         <div className="class-group-table1">
           <table>
             <thead>
@@ -260,7 +260,7 @@ const StudentView = () => {
             </tbody>
           </table>
         </div>
-        <h2 className="student-title">Star Students</h2>
+        <h2 className="student-title1">Star Students</h2>
         <div className="class-group-table1">
           <table>
             <thead>
@@ -299,7 +299,7 @@ const StudentView = () => {
             </tbody>
           </table>
         </div>
-        <h2 className="student-title">Regular Students</h2>
+        <h2 className="student-title1">Regular Students</h2>
         <div className="class-group-table1">
           <table>
             <thead>
@@ -340,7 +340,7 @@ const StudentView = () => {
             </tbody>
           </table>
         </div>
-        <h2 className="student-title">Below Average Students</h2>
+        <h2 className="student-title1">Below Average Students</h2>
         <div className="class-group-table1">
           <table>
             <thead>

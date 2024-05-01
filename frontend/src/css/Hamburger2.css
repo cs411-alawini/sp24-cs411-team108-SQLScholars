@@ -127,6 +127,11 @@
   padding: 20px 20px 20px 260px;
 }
 
+.student-title1 {
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 0;
+}
 .student-title {
   font-size: 22px;
   padding-left: 45%;

@@ -14,10 +14,29 @@ const StudentView = () => {
   const [disabledButtons, setDisabledButtons] = useState([]);
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const [nav_path, setPath] = useState("/homeTeacher");
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
   const [sModalOpen, setIsSModalOpen] = useState(false);
   const [tModalOpen, setIsTModalOpen] = useState(false);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      if (parsedData.userType === 0) {
+        setPath("/homeAdmin");
+      } else if (parsedData.userType === 1) {
+        setPath("/homeTeacher");
+      } else if (parsedData.userType === 2) {
+        setPath("/homeStudent");
+      } else if (parsedData.userType === 3) {
+        setPath("/homeParent");
+      }
+    } else {
+      console.error("User data not found in local storage");
+    }
+  }, []);
 
   useEffect(() => {
     const userData = localStorage.getItem("userData");
@@ -58,16 +77,6 @@ const StudentView = () => {
   }, []);
 
   const options = [
-    {
-      id: "home",
-      label: "Home",
-      path: `/homeStudent`,
-    },
-    {
-      id: "classGroup",
-      label: "ClassGroup View",
-      path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
-    },
     {
       id: "attendance",
       label: "Attendance",
@@ -197,7 +206,7 @@ const StudentView = () => {
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img src={logo} alt="Illini Logo" className="logo" onClick={() => navigate(nav_path)} />
         <h1 className="student-title1" style={{marginLeft: "10px"}}>{userType}</h1>
         
       </div>

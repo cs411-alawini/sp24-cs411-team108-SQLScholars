@@ -52,6 +52,7 @@ class ClassroomGroupController{
         const userId = req.body.userId;
         const classGroupId = req.body.classGroupId;
         const userResponse: any = SQLHelper.executeQuery(SQLHelper.getUserById(userId));
+        console.log(userResponse);
         if(userResponse === null || userResponse[0].length === 0){
             return apiResponse("User not found", RESPONSE.HTTP_NOT_FOUND, {}, res);
         }

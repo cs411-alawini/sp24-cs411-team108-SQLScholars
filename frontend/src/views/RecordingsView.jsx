@@ -250,7 +250,7 @@ const RecordingsView = () => {
         </div>
       )}
       <div className="recordings-content">
-        <h1 className="student-title">Recordings View</h1>
+        <h1 className="student-title1">Recordings View</h1>
         {addModalOpen && (
           <div className="modal-recordings">
             <h1 className="student-title">Add Recording</h1>

@@ -60,6 +60,11 @@ function ClassGroupView() {
 
   const options = [
     {
+      id: "home",
+      label: "Home",
+      path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
+    },
+    {
       id: "attendance",
       label: "Attendance",
       path: `/attendanceView?classGroupId=${cgId}&classroomId=${crId}`,
@@ -75,9 +80,9 @@ function ClassGroupView() {
       path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
-      id: "grades",
-      label: "Grades",
-      path: `/gradesView?classGroupId=${cgId}&classroomId=${crId}`,
+      id: "recording",
+      label : "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
     },
   ];
 
@@ -86,11 +91,32 @@ function ClassGroupView() {
     navigate(path);
   };
 
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/login");
+  };
+
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img
+          src={logo}
+          alt="Illini Logo"
+          className="logo"
+          onClick={() => navigate("/homeStudent")}
+        />
         <h1 className="student-title">{userType}</h1>
+        <header className="app-header">
+          <div className="container" style={{ marginLeft: "500px" }}>
+            <button
+              type="button"
+              className="logout-button"
+              onClick={logoutUser}
+            >
+              Logout
+            </button>
+          </div>
+        </header>
       </div>
       <button
         className={`hamburger-icon ${isActive ? "active" : ""}`}

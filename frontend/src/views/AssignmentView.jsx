@@ -5,30 +5,24 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 const AssignmentView = () => {
   const [isActive, setIsActive] = useState(false);
-  const [userType, setUserId] = useState(null);
+  const [userType, setUserType] = useState(null);
+  const [assignmentData, setAssignment] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [action, setAction] = useState("");
+  const [assignmentId, setAssignmentId] = useState("");
+  const [googleFormLink, setGoogleFormLink] = useState("");
+  const [maximumGrade, setMaxGrade] = useState("");
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
-  useEffect(() => {
-    const userData = localStorage.getItem("userData");
-    if (userData) {
-      const parsedData = JSON.parse(userData);
-      if (parsedData.userType == 0) {
-        setUserId("Admin");
-      } else if (parsedData.userType == 1) {
-        setUserId("Teacher");
-      } else if (parsedData.userType == 2) {
-        setUserId("Student");
-      } else if (parsedData.userType == 3) {
-        setUserId("Parent");
-      }
-    } else {
-      console.error("User data not found in local storage");
-    }
-  }, []);
-
+  const classGroupId = cgId;
   const options = [
+    {
+      id: "home",
+      label: "Home",
+      path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
+    },
     {
       id: "attendance",
       label: "Attendance",
@@ -45,9 +39,9 @@ const AssignmentView = () => {
       path: `/studentView?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
-      id: "grades",
-      label: "Grades",
-      path: `/gradesView?classGroupId=${cgId}&classroomId=${crId}`,
+      id: "recording",
+      label : "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
     },
   ];
 
@@ -56,11 +50,120 @@ const AssignmentView = () => {
     navigate(path);
   };
 
+  useEffect(() => {
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      const types = ["Admin", "Teacher", "Student", "Parent"];
+      setUserType(types[parsedData.userType]);
+    } else {
+      console.error("User data not found in local storage");
+    }
+    fetchAssignment();
+  }, []);
+
+  const fetchAssignment = async () => {
+    try {
+      const userData = localStorage.getItem("userData");
+      const parsedData = JSON.parse(userData);
+      const uId = parsedData.userId;
+      const response = await fetch(
+        `http://34.28.230.12/api/assignment/getAssignments?classGroupId=${cgId}&userId=${uId}`
+      );
+      const responseData = await response.json();
+      const assignment = responseData.data.assignments;
+      console.log("assignment:", assignment);
+      console.log("responseData:", responseData);
+      setAssignment(assignment);
+    } catch (error) {
+      console.error("Could not fetch details:", error);
+    }
+  };
+
+  const handleAssignmentAction = async (action) => {
+    if (action === "create" && (!googleFormLink || !maximumGrade)) {
+      alert("Please fill all required fields for creating an assignment.");
+      return;
+    } else if (
+      action === "edit" &&
+      (!assignmentId || !googleFormLink || !maximumGrade)
+    ) {
+      alert("Please fill all required fields for editing an assignment.");
+      return;
+    } else if (action === "delete" && !assignmentId) {
+      alert("Please enter the Assignment ID to delete.");
+      return;
+    }
+    const userData = localStorage.getItem("userData");
+    const parsedData = JSON.parse(userData);
+    const userId = parsedData.userId;
+
+    let apiUrl = `http://34.28.230.12/api/assignment/${action}`;
+    const method = action === "edit" ? "PUT" : "POST";
+
+    const payload = {
+      userId: userId,
+      assignmentId: action !== "create" ? assignmentId : undefined,
+      googleFormLink: action !== "delete" ? googleFormLink : undefined,
+      maximumGrade: action !== "delete" ? maximumGrade : undefined,
+      classGroupId: action === "create" ? classGroupId : undefined,
+    };
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      alert(data.message);
+      await fetchAssignment();
+    } catch (error) {
+      console.error("Failed to process assignment:", error);
+    }
+
+    setModalOpen(false);
+    setAssignmentId("");
+    setGoogleFormLink("");
+    setMaxGrade("");
+  };
+
+  const handleModalOpen = (action) => {
+    setAction(action);
+    setModalOpen(true);
+  };
+
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/login");
+  };
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img
+          src={logo}
+          alt="Illini Logo"
+          className="logo"
+          onClick={() => navigate("/homeStudent")}
+        />
         <h1 className="student-title">{userType}</h1>
+        <header className="app-header">
+          <div className="container" style={{ marginLeft: "500px" }}>
+            <button
+              type="button"
+              className="logout-button"
+              onClick={logoutUser}
+            >
+              Logout
+            </button>
+          </div>
+        </header>
       </div>
       <button
         className={`hamburger-icon ${isActive ? "active" : ""}`}
@@ -81,12 +184,103 @@ const AssignmentView = () => {
           ))}
         </div>
       )}
-      <div className="content">
-        <div>
-          <h1>Assignment View</h1>
+      <div className="attendance-table">
+        <div
+          className="class-group-table"
+          style={{ marginLeft: "270px", width: "100%" }}
+        >
+          <table>
+            <thead>
+              <tr>
+                <th>Assignment ID</th>
+                <th>Google Form Link</th>
+                <th>Average Student Grade</th>
+                <th>Maximum Grade Possible</th>
+                <th>Maximum Student Grade</th>
+                <th>Check Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assignmentData.map((data, index) => (
+                <tr key={index}>
+                  <td>{data.assignmentId}</td>
+                  <td>{data.googleFormLink}</td>
+                  <td>
+                    {data.averageGrade === null ? "N.A" : data.averageGrade}
+                  </td>
+                  <td>{data.maxPossibleGrade}</td>
+                  <td>
+                    {data.maxStudentScore === null
+                      ? "N.A"
+                      : data.maxStudentScore}
+                  </td>
+                  <td>
+                    <button
+                      onClick={() =>
+                        navigate(
+                          `/gradesView?classGroupId=${cgId}&classroomId=${crId}&assignmentId=${data.assignmentId}`
+                        )
+                      }
+                    >
+                      View Grade
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {userType === "Teacher" && (
+            <div
+              style={{ marginTop: "20px", maxWidth: "600px", width: "100%" }}
+            >
+              <button onClick={() => handleModalOpen("edit")}>
+                Edit Assignment
+              </button>
+              <button onClick={() => handleModalOpen("create")}>
+                Add New Assignment
+              </button>
+              <button onClick={() => handleModalOpen("delete")}>
+                Delete Assignment
+              </button>
+            </div>
+          )}
         </div>
       </div>
+      {modalOpen && (
+        <div className="modal">
+          <h2>{`${
+            action.charAt(0).toUpperCase() + action.slice(1)
+          } Assignment`}</h2>
+          {(action === "edit" || action === "create") && (
+            <>
+              <input
+                type="text"
+                placeholder="Enter Google Form Link"
+                value={googleFormLink}
+                onChange={(e) => setGoogleFormLink(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Enter Maximum Grade"
+                value={maximumGrade}
+                onChange={(e) => setMaxGrade(e.target.value)}
+              />
+            </>
+          )}
+          {action !== "create" && (
+            <input
+              type="text"
+              placeholder="Enter Assignment ID"
+              value={assignmentId}
+              onChange={(e) => setAssignmentId(e.target.value)}
+            />
+          )}
+          <button onClick={() => handleAssignmentAction(action)}>Submit</button>
+          <button onClick={() => setModalOpen(false)}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 };
+
 export default AssignmentView;

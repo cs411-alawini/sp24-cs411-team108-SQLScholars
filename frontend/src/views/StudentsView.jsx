@@ -78,6 +78,11 @@ const StudentView = () => {
 
   const options = [
     {
+      id: "home",
+      label: "Home",
+      path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
+    },
+    {
       id: "attendance",
       label: "Attendance",
       path: `/attendanceView?classGroupId=${cgId}&classroomId=${crId}`,

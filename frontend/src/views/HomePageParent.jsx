@@ -14,21 +14,40 @@ ChartJS.register(
   Legend,
   ArcElement
 );
+const prepareChartData = (grades) => {
+  if(grades.length === 0) {
+    return {};
+  }
+  const labels = grades.map(item => item.assignmentId);
+  const userGrades = grades.map(item => item.grade);
+  const topperGrades = grades.map(item => item.topperGrade);
 
-const prepareGradeData = (grades) => {
-    const subjects = [...new Set(grades.map(item => item.subjectName))];
-    return subjects.map(subject => {
-      const subjectData = grades.filter(item => item.subjectName === subject);
-      const Tempgrades = subjectData.map(item => item.grade);
-      return {
-        label: subject,
-        data: Tempgrades,
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1,
-        maxBarThickness: 15
-      };
-    });
+  return {
+      labels,
+      datasets: [
+          {
+              label: 'Student Grade',
+              data: userGrades,
+              backgroundColor: 'rgba(255, 99, 132, 0.6)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+          },
+          {
+              label: 'Topper Grade',
+              data: topperGrades,
+              backgroundColor: 'rgba(54, 162, 235, 0.6)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+          },
+          {
+              label: 'Maximum Possible Grade',
+              data: grades.map(item => item.maximumPossibleGrade),
+              backgroundColor: 'rgba(75, 192, 192, 0.6)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+          }
+      ]
+  };
 };
 
 const prepareAttendanceData = (attendance) => {
@@ -40,11 +59,11 @@ const prepareAttendanceData = (attendance) => {
         label: 'Attendance',
         data: [presentDays, absentDays],
         backgroundColor: [
-          'rgba(12, 198, 42, 1)',
-          'rgba(180, 19, 48, 1)'
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(255, 99, 132, 0.6)'
         ],
         borderColor: [
-          'rgba(54, 162, 235, 1)',
+          'rgba(75, 192, 192, 1)',
           'rgba(255, 99, 132, 1)'
         ],
         borderWidth: 1
@@ -53,21 +72,18 @@ const prepareAttendanceData = (attendance) => {
   };
 
 const StudentCharts = ({ student }) => {
-  const gradeData = {
-    labels: student.assignmentGrades.map(item => item.assignmentId),
-    datasets: prepareGradeData(student.assignmentGrades)
-  };
+  const gradeData =  prepareChartData(student.assignmentGrades)
   const attendanceData = prepareAttendanceData(student.attendance);
 
   return (
     <div style={{marginBottom: "20px", marginTop: "50px", fontWeight: "600"}}>
       <a>{student.userData.firstName} {student.userData.lastName}</a>
       <div className="charts-row">
-        {gradeData && gradeData.datasets && gradeData.datasets.length > 0 && (
+        {gradeData && gradeData.datasets && gradeData.datasets.length > 0 ? (
           <div className="chart-container">
-            <Bar data={gradeData} options={{ scales: { y: { beginAtZero: true } } }} />
+            <Bar data={gradeData} options={{ scales: { y: { beginAtZero: true } }, plugins: {legend: {display: true}} }} />
           </div>
-        )}
+        ) : <div className="chart-container" style={{marginTop: "120px"}}>No assignment data available</div>}
         {attendanceData && attendanceData.datasets && attendanceData.datasets.length > 0 && (
           <div className="chart-container">
             <Pie data={attendanceData} />
@@ -91,7 +107,7 @@ const HomePageParent = () => {
           alt="Illini Logo"
           className="logo"
         />
-          <span>Parent Dashboard</span>
+          <span style={{fontWeight: "550"}}>Parent Dashboard</span>
             
             <div className="container">
               <button type="button" className="logout-button" onClick={logoutUser}>

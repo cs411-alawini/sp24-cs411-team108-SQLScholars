@@ -125,7 +125,7 @@
   }
   
   .chart-container {
-    width: 90%;  /* Set the width as needed */
+    width: 100%;  /* Set the width as needed */
     height: 300px; /* Set the height as needed */
     padding-left: 10%;
   }

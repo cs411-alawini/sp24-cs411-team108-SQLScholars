@@ -85,6 +85,7 @@ const HomePageStudent = () => {
     <div className="app">
       <header className="app-header">
         <input type="search" placeholder="Search for Classroom..." />
+        <span style={{fontWeight: "550", fontSize: "20px"}}>Teacher</span>
         <div className="container">
           <button type="button" className="logout-button" onClick={logoutUser}>
             Logout

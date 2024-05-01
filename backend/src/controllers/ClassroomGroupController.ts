@@ -39,7 +39,7 @@ class ClassroomGroupController{
             return apiResponse("Error in fetching ClassroomGroup Count", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
         }
         const latestClassGroupId = classGroupCountResponse[0][0].latestClassGroupId ;
-        const classGroupCount =  parseInt(latestClassGroupId.slice(3)) + 1;
+        const classGroupCount =  parseInt(latestClassGroupId.slice(4)) + 1;
         const classGroupId = `CGID${classGroupCount.toString().padStart(5, '0')}`;
         if(zoomLink === null || zoomLink === "" || classStartTimings === null || classStartTimings === "" || classDuration === null || classDuration === ""){
             return apiResponse("Please provide all the required details", RESPONSE.HTTP_BAD_REQUEST, {}, res);
@@ -292,7 +292,7 @@ class ClassroomGroupController{
             return apiResponse("Error in fetching ClassroomGroup Recording Count", RESPONSE.HTTP_INTERNAL_SERVER_ERROR, {}, res);
         }
         const latestRecordingId = classroomGroupRecordingCountResponse[0][0].count;
-        const recordingCount =  parseInt(latestRecordingId.slice(3)) + 1;
+        const recordingCount =  parseInt(latestRecordingId.slice(4)) + 1;
         const recordingId = `CRID${recordingCount.toString().padStart(5, '0')}`;
         if(recordingLink === null || recordingLink === "" || classDate === null || classDate === ""){
             return apiResponse("Please provide all the required details", RESPONSE.HTTP_BAD_REQUEST, {}, res);

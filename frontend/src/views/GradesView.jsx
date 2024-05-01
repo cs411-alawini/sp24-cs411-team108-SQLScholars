@@ -6,7 +6,15 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 const GradesView = () => {
   const [isActive, setIsActive] = useState(false);
   const [userType, setUserType] = useState(null);
-  const [grades, setGrades] = useState([]);
+  const [gradesData, setGradesData] = useState([]); // Change to gradesData
+  const [grade, setGrades] = useState([]);
+  const [action, setAction] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState(""); // "add" or "edit"
+  const [userId, setUserId] = useState("");
+  const [assignmentId, setAssignmentId] = useState("");
+  const [remarks, setRemarks] = useState("");
+
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const cgId = params.get("classGroupId");
@@ -25,80 +33,51 @@ const GradesView = () => {
     fetchGrades();
   }, []);
 
-  const addGrade = async () => {
-    const userId = prompt("Enter User ID:");
-    const assignmentId = prompt("Enter Assignment ID:");
-    const grade = prompt("Enter Grade:");
-    const remarks = prompt("Enter Remarks:");
-    if (
-      userId === null ||
-      assignmentId === null ||
-      grade === null ||
-      remarks === null
-    ) {
+  const handleGradeSubmission = async () => {
+    if (!userId || !assignmentId || !grade) {
+      alert("Please fill all required fields.");
       return;
     }
 
+    console.log("modal action:", action);
+    const apiUrl = `http://34.28.230.12/api/assignment/${
+      action === "add" ? "addGrade" : "editGrade"
+    }`;
+    const method = "PUT";
     const payload = { userId, assignmentId, grade, remarks };
+
     try {
-      const response = await fetch(
-        `http://34.28.230.12/api/assignment/addGrade`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(apiUrl, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log("Add Grade Response:", data);
-      fetchGrades(); // Refresh grades
+      console.log(`${action === "add" ? "Add" : "Edit"} Grade Response:`, data);
+      fetchGrades();
+      setModalOpen(false);
     } catch (error) {
-      console.error("Could not add grade:", error);
+      console.error(
+        `Could not ${action === "add" ? "add" : "edit"} grade:`,
+        error
+      );
     }
+    setModalOpen(false);
+    setUserId("");
+    setAssignmentId("");
+    setGrades("");
+    setRemarks("");
   };
 
-  // Function to edit a grade
-  const editGrade = async () => {
-    const userId = prompt("Enter User ID:");
-    const assignmentId = prompt("Enter Assignment ID:");
-    const grade = prompt("Enter New Grade:");
-    const remarks = prompt("Enter Remarks:");
-    if (
-      userId === null ||
-      assignmentId === null ||
-      grade === null ||
-      remarks === null
-    ) {
-      return;
-    }
-    const payload = { userId, assignmentId, grade, remarks };
-    try {
-      const response = await fetch(
-        `http://34.28.230.12/api/assignment/editGrade`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log("Edit Grade Response:", data);
-      fetchGrades(); // Refresh grades
-    } catch (error) {
-      console.error("Could not edit grade:", error);
-    }
+  const handleModalOpen = (action) => {
+    setAction(action);
+    setModalOpen(true);
   };
 
   const fetchGrades = async () => {
@@ -115,12 +94,12 @@ const GradesView = () => {
       const responseData = await response.json();
       console.log("Grades response:", responseData);
       if (Array.isArray(responseData.data.assignmentGrades)) {
-        setGrades(responseData.data.assignmentGrades);
+        setGradesData(responseData.data.assignmentGrades);
       } else {
         throw new Error("Expected an array of grades");
       }
     } catch (error) {
-      setGrades([]);
+      setGradesData([]);
       console.error("Could not fetch grades:", error);
     }
   };
@@ -129,11 +108,6 @@ const GradesView = () => {
     {
       id: "home",
       label: "Home",
-      path: `/homeStudent`,
-    },
-    {
-      id: "classGroup",
-      label: "ClassGroup View",
       path: `/classGroupview?classGroupId=${cgId}&classroomId=${crId}`,
     },
     {
@@ -158,11 +132,32 @@ const GradesView = () => {
     navigate(path);
   };
 
+  const logoutUser = () => {
+    localStorage.removeItem("userData");
+    navigate("/login");
+  };
+
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img
+          src={logo}
+          alt="Illini Logo"
+          className="logo"
+          onClick={() => navigate("/homeStudent")}
+        />
         <h1 className="student-title">{userType}</h1>
+        <header className="app-header">
+          <div className="container" style={{ marginLeft: "500px" }}>
+            <button
+              type="button"
+              className="logout-button"
+              onClick={logoutUser}
+            >
+              Logout
+            </button>
+          </div>
+        </header>
       </div>
       <button
         className={`hamburger-icon ${isActive ? "active" : ""}`}
@@ -188,49 +183,73 @@ const GradesView = () => {
           className="class-group-table"
           style={{ marginLeft: "270px", width: "100%" }}
         >
+          <table>
+            <thead>
+              <tr>
+                <th>Assignment ID</th>
+                <th>Class Group ID</th>
+                <th>User ID</th>
+                <th>Grade</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              {gradesData.map((g, index) => (
+                <tr key={index}>
+                  <td>{g.assignmentId}</td>
+                  <td>{g.classGroupId}</td>
+                  <td>{g.userId}</td>
+                  <td>{g.grade}</td>
+                  <td>{g.remarks}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
           {(userType === "Admin" || userType === "Teacher") && (
-            <>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Assignment ID</th>
-                    <th>Class Group ID</th>
-                    <th>User ID</th>
-                    <th>Grade</th>
-                    <th>Remarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {grades.length > 0 ? (
-                    grades.map((grade, index) => (
-                      <tr key={index}>
-                        <td>{grade.assignmentId}</td>
-                        <td>{grade.classGroupId}</td>
-                        <td>{grade.userId}</td>
-                        <td>{grade.grade}</td>
-                        <td style={{ width: "40%" }}>{grade.remarks}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5">No grades available</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              <div style={{ marginTop: "20px" }}>
-                {userType === "Teacher" && (
-                  <>
-                    <button onClick={addGrade}>Add Grade</button>
-                    <button onClick={editGrade}>Edit Grade</button>
-                  </>
-                )}
-              </div>
-            </>
+            <div style={{ marginTop: "20px" }}>
+              <button onClick={() => handleModalOpen("add")}>Add Grade</button>
+              <button onClick={() => handleModalOpen("edit", grade)}>
+                Edit Grade
+              </button>
+            </div>
           )}
         </div>
       </div>
+      {modalOpen && (
+        <div className="modal">
+          <h2>{`${action.charAt(0).toUpperCase() + action.slice(1)} Grade`}</h2>
+          <input
+            type="text"
+            placeholder="Enter User ID"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Enter Assignment ID"
+            value={assignmentId}
+            onChange={(e) => setAssignmentId(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Enter Grade"
+            value={grade}
+            onChange={(e) => setGrades(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Enter Remarks"
+            value={remarks}
+            onChange={(e) => setRemarks(e.target.value)}
+          />
+          <button onClick={handleGradeSubmission}>{`${
+            action.charAt(0).toUpperCase() + action.slice(1)
+          } Grade`}</button>
+          <button onClick={() => setModalOpen(false)}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 };
+
 export default GradesView;

@@ -179,8 +179,8 @@ const HomePageAdmin = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <span style={{fontWeight: "550", fontSize: "20px"}}>Administrator</span>
-        <div className="container" style={{ marginLeft: "63%" }}>
+        <span style={{fontWeight: "550", fontSize: "20px", marginLeft: "450px"}}>Administrator</span>
+        <div className="container" style={{ marginLeft: "25%" }}>
           <button type="button" className="create-button" onClick={() => navigate('/createClassroom')}>
             Create Classroom
           </button>

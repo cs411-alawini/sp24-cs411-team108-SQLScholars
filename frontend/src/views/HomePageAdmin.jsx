@@ -3,12 +3,19 @@ import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
+import settingsbutton from "../img/three-dots.png";
 
-const CourseCard = ({ course }) => {
+
+const CourseCard = ({ course, onDelete }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); 
 
+  const userData = localStorage.getItem("userData")
+  const parsedData = JSON.parse(userData);
+  const uId = parsedData.userId;
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
+  const toggleMenu = () => setMenuOpen(!menuOpen);
   const navigate = useNavigate();
   // Ensure classToppers is an array, default to empty if undefined
   const toppers = course.classToppers || [];
@@ -17,11 +24,52 @@ const CourseCard = ({ course }) => {
       `/classGroupview?classGroupId=${course.classGroupId}&classroomId=${course.classroomId}`
     );
   };
+
+  const handleEdit = () => {
+    // Add your logic to handle edit
+    navigate(`/editClassGroup?classGroupId=${course.classGroupId}&userId=${uId}`);
+    setMenuOpen(false); // Close the menu
+  };
+
+  // Function to handle delete
+  const handleDelete = async () => {
+
+    try {
+      const response = await fetch(`http://34.28.230.12/api/classroomgroup/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          classGroupId: course.classGroupId,
+          userId:  uId
+      })
+    });
+      if (!response.ok) {
+        throw new Error('Failed to delete the classroom group');
+      }
+      onDelete(course.classGroupId);  // Notify the parent component to update its state
+      setMenuOpen(false); // Close the menu
+    } catch (error) {
+      console.error('Error deleting classroom group:', error);
+    }
+  };
+
+
   return (
     <div className="course-card">
       <div className="card-header">
         <img src={logo} alt="University Logo" />
         <h3>University of Illinois at Urbana-Champaign</h3>
+        <button className="menu-button" onClick={toggleMenu}>
+          <img src={settingsbutton} className="three-dots-icon" alt="Menu" />
+        </button>
+        {menuOpen && (
+          <div className="menu-content">
+            <button onClick={handleEdit}>Edit</button>
+            <button onClick={handleDelete}>Delete</button>
+          </div>
+        )}
       </div>
       <div className="card-body">
         <div onClick={handleCardClick}>
@@ -70,6 +118,8 @@ const CourseCard = ({ course }) => {
 const HomePageAdmin = () => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     const userData = localStorage.getItem("userData");
     if (!userData) {
@@ -100,17 +150,30 @@ const HomePageAdmin = () => {
     fetchCourses();
   }, []);
 
+  
+  const handleDeleteCourse = (classGroupId) => {
+    setCourses(courses => courses.filter(course => course.classGroupId !== classGroupId));
+  };
+
   const logoutUser = () => {
     localStorage.removeItem("userData");
     navigate("/");
   };
 
+  const filteredCourses = courses.filter((course) =>
+  course.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  course.className.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
   return (
     <div className="app">
       <header className="app-header">
-        <input type="search" placeholder="Search for Classroom..." />
+        <input type="search" placeholder="Search for Classroom..." 
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        />
         <div className="container">
-          <button type="button" className="create-button">
+          <button type="button" className="create-button" onClick={() => navigate('/createClassroom')}>
             Create Classroom
           </button>
           <button type="button" className="logout-button" onClick={logoutUser}>
@@ -119,8 +182,8 @@ const HomePageAdmin = () => {
         </div>
       </header>
       <div className="courses-container">
-        {courses.map((course, index) => (
-          <CourseCard key={index} course={course} />
+        {filteredCourses.map((course, index) => (
+          <CourseCard key={index} course={course} onDelete={handleDeleteCourse} />
         ))}
       </div>
     </div>

@@ -43,7 +43,7 @@ const GradesView = () => {
     const apiUrl = `http://34.28.230.12/api/assignment/${
       action === "add" ? "addGrade" : "editGrade"
     }`;
-    const method = "PUT";
+    const method = action === "add" ? "POST" : "PUT"
     const payload = { userId, assignmentId, grade, remarks };
 
     try {

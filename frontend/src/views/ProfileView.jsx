@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import {format} from 'date-fns';;
-import "../css/Hamburger.css";
+import "../css/Hamburger2.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const ProfileView = () => {

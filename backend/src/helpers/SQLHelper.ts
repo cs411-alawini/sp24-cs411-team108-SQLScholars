@@ -206,7 +206,7 @@ class SQLHelper{
         return `SELECT * FROM Grades where assignmentId = "${assignmentId}" AND userId = "${userId}";`;
     }
     static getAssignmentGradesByAssignmentId(assignmentId){
-        return `SELECT * FROM Grades where assignmentId = "${assignmentId}";`;
+        return `SELECT * FROM Grades NATURAL JOIN Users where assignmentId = "${assignmentId}";`;
 
     }
     static createAssignmentGrade(assignmentId, userId, classGroupId, classroomId, courseId, grade, remarks, sentimentScore, isNotificationSent){

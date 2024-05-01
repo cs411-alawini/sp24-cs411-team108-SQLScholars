@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
-import "../css/Hamburger.css";
+import "../css/Hamburger2.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const RecordingsView = () => {
@@ -266,7 +266,7 @@ const RecordingsView = () => {
 
           </div>
         )}
-        <div className="class-group-table">
+        <div className="class-group-table1">
           <table className="add-student-table">
             <thead>
               <tr>

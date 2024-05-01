@@ -1,3 +1,143 @@
+/* .h-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  background-color: #1e3877;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  height: 50px; 
+}
+
+.logo {
+  height: 30px; 
+}
+
+.student-title {
+  padding-left: 800px; 
+}
+
+.hamburger-icon {
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: black;
+  position: absolute;
+  top: 80px; 
+  left: 5px;
+  z-index: 3;
+}
+
+.sidebar {
+  background-color: #1e3877;
+  position: fixed;
+  top: 50px; 
+  bottom: 0;
+  left: 0;
+  width: 250px;
+  transition: left 0.3s;
+  z-index: 2;
+  padding-top: 10px;
+  padding-top: 80px;
+}
+
+.menu-option {
+  color: white;
+  padding: 10px 20px;
+  text-align: left;
+  background: none;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.3s, border-bottom 0.3s;
+}
+
+.menu-option:hover {
+  border-bottom: 3px solid orange; 
+}
+
+.content {
+  padding: 100px;
+  background: #f0f0f0;
+  height: calc(100% - 50px); 
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.class-group-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.class-group-table th,
+.class-group-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+} */
+/* .hamburger-icon.active {
+  color: white; 
+}
+.class-group-table th {
+ 
+  color: black;
+} */
+
+/* .class-group-table td {
+  background-color: white;
+}
+
+.class-group-table tr:hover {
+  background-color: white;
+} */
+
+/* .class-group-table a {
+  color: #0645ad;
+  text-decoration: none;
+}
+
+.class-group-table a:hover {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+} */
+
+/* .content {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  height: 100vh;
+  padding: 20px 20px 20px 260px;
+  margin-top: 0;
+}
+
+.table-container {
+  max-width: 600px;
+  width: 100%;
+  margin-top: 0;
+} */
+
+/* .profile-picture {
+  height: 70%;
+  width: 2.5%;
+  margin-left: 55%;
+}
+
+.profile-picture:hover {
+  cursor: pointer;
+} */
+
 .h-container {
   display: flex;
   flex-direction: column;
@@ -95,7 +235,7 @@
 }
 
 .class-group-table td {
-  background-color: #f2f2f2;
+  background-color: #ddd;
 }
 
 .class-group-table tr:hover {
@@ -127,4 +267,14 @@
   max-width: 600px;
   width: 100%;
   margin-top: 0;
+}
+
+.profile-picture {
+  height: 70%;
+  width: 2.5%;
+  /* margin-left: 55%; */
+}
+
+.profile-picture:hover {
+  cursor: pointer;
 }

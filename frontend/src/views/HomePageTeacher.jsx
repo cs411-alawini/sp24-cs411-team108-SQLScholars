@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import logo from "../img/illini_logo.png";
 import "../css/HomePage.css";
 import { useNavigate } from "react-router-dom";
+import profilePic from "../img/profile.png";
 
 const CourseCard = ({ course }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -95,11 +96,17 @@ const HomePageStudent = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <span style={{fontWeight: "550", fontSize: "20px"}}>Teacher</span>
-        <div className="container">
+        <div className="container" style={{ marginLeft: "75%" }}>
           <button type="button" className="logout-button" onClick={logoutUser}>
             Logout
           </button>
         </div>
+        <img
+          className="profile-picture"
+          onClick={() => navigate("/profileView")}
+          src={profilePic}
+          alt="Profile Pic"
+        />
       </header>
       <div className="courses-container">
         {filteredCourses.map((course, index) => (

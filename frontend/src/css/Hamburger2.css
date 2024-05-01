@@ -1,283 +1,283 @@
 .h-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  
-  .header {
-    background-color: #1e3877;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    height: 50px; /* Reduced height of the top bar */
-  }
-  
-  .logo {
-    height: 30px; /* Adjust logo height as needed */
-  }
-  
-  .hamburger-icon {
-    font-size: 30px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: black;
-    position: absolute;
-    top: 80px; /* Positioned right below the top bar */
-    left: 5px;
-    z-index: 3;
-  }
-  
-  .sidebar {
-    background-color: #1e3877;
-    position: fixed;
-    top: 50px; /* Positioned right below the top bar */
-    bottom: 0;
-    left: 0;
-    width: 250px;
-    transition: left 0.3s;
-    z-index: 2;
-    padding-top: 10px;
-    padding-top: 80px;
-  }
-  
-  .menu-option {
-    color: white;
-    padding: 10px 20px;
-    text-align: left;
-    background: none;
-    border: none;
-    width: 100%;
-    box-sizing: border-box;
-    cursor: pointer;
-    transition: background-color 0.3s, border-bottom 0.3s;
-  }
-  
-  .menu-option:hover {
-    border-bottom: 3px solid orange; /* Underline with orange on hover */
-  }
-  
-  .content {
-    padding: 100px;
-    background: #f0f0f0;
-    height: calc(100% - 50px); /* Height adjusted based on the header */
-    overflow: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .class-group-table th,
-  .class-group-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  .hamburger-icon.active {
-    color: white; /* Color changes when active */
-  }
-  .class-group-table th {
-    background-color: #004080;
-    color: white;
-    width: 150px;
-  }
-  
-  .class-group-table td {
-    background-color: #f2f2f2;
-  }
-  
-  .class-group-table tr:hover {
-    background-color: #ddd;
-  }
-  
-  .class-group-table a {
-    color: #0645ad;
-    text-decoration: none;
-  }
-  
-  .class-group-table a:hover {
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .content {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-    height: 100vh;
-    padding: 20px 20px 20px 260px;
-    margin-top: 0;
-  }
-  
-  .table-container {
-    max-width: 600px;
-    width: 100%;
-    margin-top: 0;
-  }
-  
-  .student-content {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    padding: 20px 20px 20px 260px;
-  }
-  
-  .student-title {
-    font-size: 22px;
-    padding-left: 2%;
-    text-align: center;
-    margin-bottom: 0;
-  }
-  
-  .modal-students {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1050;
-    max-height: 60vh; /* Adjust as needed */
-    width: 80%; /* Adjust width as necessary */
-    border-radius: 8px; /* Rounded corners for the modal */
-  }
-  
-  
-  .class-group-table1 {
-    max-height: 30vh; /* Set a max-height appropriate for your modal size */
-    overflow: auto; /* Enables vertical scrolling */
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  
-  .class-group-table1 th,
-  .class-group-table1 td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  
-  
-  .modal-title {
-    width: 100%;
-    text-align: center;
-    padding-bottom: 1%;
-    margin-bottom: 0;
-  }
-  
-  .search-bar {
-    width: 65%;
-    font-size: 22px;
-  }
-  
-  .search-button {
-    margin-left: 2%;
-  }
-  
-  .add-student-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .add-student-table th,
-  .add-student-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  button:disabled {
-    opacity: 0.5; /* Reduce opacity for disabled state */
-    background-color: #C0C0C0;
-    cursor: not-allowed; /* Change cursor to indicate that the button is disabled */
-  }
-  
-  .profile-content {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .modal-profile {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1050;
-    max-height: 60vh; /* Adjust as needed */
-    width: 18%; /* Adjust width as necessary */
-    border-radius: 8px; /* Rounded corners for the modal */
-  }
-  
-  .recordings-content {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    padding: 20px 20px 20px 260px;
-  }
-  
-  .modal-recordings {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1050;
-    max-height: 60vh; /* Adjust as needed */
-    width: 18%; /* Adjust width as necessary */
-    border-radius: 8px; /* Rounded corners for the modal */
-  }
-  
-  .profile-field {
-    font-size: 26px;
-  }
-  
-  .profile-input {
-    width: 35%;
-    margin-left: 33%;
-    font-size: 22px;
-  }
-  
-  .profile-field {
-    font-size: 26px;
-  }
-  
-  .profile-input {
-    width: 35%;
-    margin-left: 33%;
-    font-size: 22px;
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: center; /* Centers the buttons horizontally */
-    margin-top: 20px;
-  }
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 
-  .parent-input {
-    width: 35%;
-    margin-left: 1%;
-    font-size: 22px;
-  }
+.header {
+  background-color: #1e3877;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  height: 50px; /* Reduced height of the top bar */
+}
 
-  .profile-picture {
-    height: 85%;
-    width: 7%;
-    margin-left: 80%;
-  }
+.logo {
+  height: 30px; /* Adjust logo height as needed */
+}
+
+.hamburger-icon {
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: black;
+  position: absolute;
+  top: 80px; /* Positioned right below the top bar */
+  left: 5px;
+  z-index: 3;
+}
+
+.sidebar {
+  background-color: #1e3877;
+  position: fixed;
+  top: 50px; /* Positioned right below the top bar */
+  bottom: 0;
+  left: 0;
+  width: 250px;
+  transition: left 0.3s;
+  z-index: 2;
+  padding-top: 10px;
+  padding-top: 80px;
+}
+
+.menu-option {
+  color: white;
+  padding: 10px 20px;
+  text-align: left;
+  background: none;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.3s, border-bottom 0.3s;
+}
+
+.menu-option:hover {
+  border-bottom: 3px solid orange; /* Underline with orange on hover */
+}
+
+.content {
+  padding: 100px;
+  background: #f0f0f0;
+  height: calc(100% - 50px); /* Height adjusted based on the header */
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.class-group-table th,
+.class-group-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+.hamburger-icon.active {
+  color: white; /* Color changes when active */
+}
+.class-group-table th {
+  background-color: #ffff;
+  color: black;
+  width: 150px;
+}
+
+.class-group-table td {
+  background-color: #ffff;
+}
+
+.class-group-table tr:hover {
+  background-color: #ddd;
+}
+
+.class-group-table a {
+  color: #0645ad;
+  text-decoration: none;
+}
+
+.class-group-table a:hover {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  height: 100vh;
+  padding: 20px 20px 20px 260px;
+  margin-top: 0;
+}
+
+.table-container {
+  max-width: 600px;
+  width: 100%;
+  margin-top: 0;
+}
+
+.student-content {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 20px 20px 20px 260px;
+}
+
+.student-title {
+  font-size: 22px;
+  padding-left: 45%;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.modal-students {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  max-height: 60vh; /* Adjust as needed */
+  width: 80%; /* Adjust width as necessary */
+  border-radius: 8px; /* Rounded corners for the modal */
+}
+
+.class-group-table1 {
+  max-height: 30vh; /* Set a max-height appropriate for your modal size */
+  overflow: auto; /* Enables vertical scrolling */
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.class-group-table1 th,
+.class-group-table1 td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.modal-title {
+  width: 100%;
+  text-align: center;
+  padding-bottom: 1%;
+  margin-bottom: 0;
+}
+
+.search-bar {
+  width: 65%;
+  font-size: 22px;
+}
+
+.search-button {
+  margin-left: 2%;
+}
+
+.add-student-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.add-student-table th,
+.add-student-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+button:disabled {
+  opacity: 0.5; /* Reduce opacity for disabled state */
+  background-color: #c0c0c0;
+  cursor: not-allowed; /* Change cursor to indicate that the button is disabled */
+}
+
+.profile-content {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.modal-profile {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  max-height: 60vh; /* Adjust as needed */
+  width: 18%; /* Adjust width as necessary */
+  border-radius: 8px; /* Rounded corners for the modal */
+}
+
+.recordings-content {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 20px 20px 20px 260px;
+}
+
+.modal-recordings {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  max-height: 60vh; /* Adjust as needed */
+  width: 18%; /* Adjust width as necessary */
+  border-radius: 8px; /* Rounded corners for the modal */
+}
+
+.profile-field {
+  font-size: 26px;
+}
+
+.profile-input {
+  width: 35%;
+  margin-left: 33%;
+  font-size: 22px;
+}
+
+.profile-field {
+  font-size: 26px;
+}
+
+.profile-input {
+  width: 35%;
+  margin-left: 33%;
+  font-size: 22px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; /* Centers the buttons horizontally */
+  margin-top: 20px;
+}
+
+.parent-input {
+  width: 35%;
+  margin-left: 1%;
+  font-size: 22px;
+}
+
+.profile-picture {
+  height: 70%;
+  width: 2.5%;
+  /* margin-left: 55%; */
+}
+
+.profile-picture:hover {
+  cursor: pointer;
+}

@@ -17,6 +17,8 @@ const GradesView = () => {
 
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const [nav_path, setPath] = useState("/homeTeacher");
+
   const cgId = params.get("classGroupId");
   const crId = params.get("classroomId");
   const assId = params.get("assignmentId");
@@ -27,6 +29,15 @@ const GradesView = () => {
       const parsedData = JSON.parse(userData);
       const types = ["Admin", "Teacher", "Student", "Parent"];
       setUserType(types[parsedData.userType]);
+      if (parsedData.userType === 0) {
+        setPath("/homeAdmin");
+      } else if (parsedData.userType === 1) {
+        setPath("/homeTeacher");
+      } else if (parsedData.userType === 2) {
+        setPath("/homeStudent");
+      } else if (parsedData.userType === 3) {
+        setPath("/homeParent");
+      }
     } else {
       console.error("User data not found in local storage");
     }
@@ -34,7 +45,7 @@ const GradesView = () => {
   }, []);
 
   const handleGradeSubmission = async () => {
-    if (!userId || !assignmentId || !grade) {
+    if (!userId || !grade) {
       alert("Please fill all required fields.");
       return;
     }
@@ -43,11 +54,10 @@ const GradesView = () => {
     const apiUrl = `http://34.28.230.12/api/assignment/${
       action === "add" ? "addGrade" : "editGrade"
     }`;
-    const method = action === "add" ? "POST" : "PUT"
+    const method = action === "add" ? "POST" : "PUT";
     const payload = { userId, assignmentId, grade, remarks };
 
     try {
-      
       const response = await fetch(apiUrl, {
         method,
         headers: {
@@ -76,8 +86,10 @@ const GradesView = () => {
     setRemarks("");
   };
 
-  const handleModalOpen = (action) => {
+  const handleModalOpen = (action, u_id) => {
     setAction(action);
+    setAssignmentId(assId);
+    setUserId(u_id);
     setModalOpen(true);
   };
 
@@ -128,8 +140,8 @@ const GradesView = () => {
     },
     {
       id: "recording",
-      label : "Recordings",
-      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`
+      label: "Recordings",
+      path: `/recordingsView?classGroupId=${cgId}&classroomId=${crId}`,
     },
   ];
 
@@ -150,11 +162,11 @@ const GradesView = () => {
           src={logo}
           alt="Illini Logo"
           className="logo"
-          onClick={() => navigate("/homeStudent")}
+          onClick={() => navigate(nav_path)}
         />
         <h1 className="student-title">{userType}</h1>
         <header className="app-header">
-          <div className="container" style={{ marginLeft: "500px" }}>
+          <div className="container" style={{ marginLeft: "1200px" }}>
             <button
               type="button"
               className="logout-button"
@@ -193,29 +205,41 @@ const GradesView = () => {
             <thead>
               <tr>
                 <th>Assignment ID</th>
-                <th>Class Group ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
                 <th>User ID</th>
                 <th>Grade</th>
                 <th>Remarks</th>
+                {(userType === "Teacher" || userType === "Admin") && (
+                  <th>Edit</th>
+                )}
               </tr>
             </thead>
             <tbody>
               {gradesData.map((g, index) => (
                 <tr key={index}>
                   <td>{g.assignmentId}</td>
-                  <td>{g.classGroupId}</td>
+                  <td>{g.firstName}</td>
+                  <td>{g.lastName}</td>
+
                   <td>{g.userId}</td>
                   <td>{g.grade}</td>
                   <td>{g.remarks}</td>
+                  {(userType === "Teacher" || userType === "Admin") && (
+                    <td>
+                      <button onClick={() => handleModalOpen("edit", g.userId)}>
+                        Edit
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
           {(userType === "Admin" || userType === "Teacher") && (
             <div style={{ marginTop: "20px" }}>
-              <button onClick={() => handleModalOpen("add")}>Add Grade</button>
-              <button onClick={() => handleModalOpen("edit", grade)}>
-                Edit Grade
+              <button onClick={() => handleModalOpen("add", "")}>
+                Add Grade
               </button>
             </div>
           )}
@@ -224,18 +248,6 @@ const GradesView = () => {
       {modalOpen && (
         <div className="modal">
           <h2>{`${action.charAt(0).toUpperCase() + action.slice(1)} Grade`}</h2>
-          <input
-            type="text"
-            placeholder="Enter User ID"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Enter Assignment ID"
-            value={assignmentId}
-            onChange={(e) => setAssignmentId(e.target.value)}
-          />
           <input
             type="text"
             placeholder="Enter Grade"
@@ -248,6 +260,15 @@ const GradesView = () => {
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
           />
+          {action === "add" && (
+            <input
+              type="text"
+              placeholder="Enter User ID"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+            />
+          )}
+
           <button onClick={handleGradeSubmission}>{`${
             action.charAt(0).toUpperCase() + action.slice(1)
           } Grade`}</button>

@@ -15,6 +15,8 @@ const ProfileView = () => {
   const [dob, setDOB] = useState("");
   const [occupation, setOccupation] = useState("");
   const [studentIds, setStudentIds] = useState("");
+  const [nav_path, setPath] = useState("/homeTeacher");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,16 +26,26 @@ const ProfileView = () => {
       const types = ["Admin", "Teacher", "Student", "Parent"];
       setUserType(types[parsedData.userType]);
       getProfileInfo(parsedData.userId);
+      if (parsedData.userType === 0) {
+        setPath("/homeAdmin");
+      } else if (parsedData.userType === 1) {
+        setPath("/homeTeacher");
+      } else if (parsedData.userType === 2) {
+        setPath("/homeStudent");
+      } else if (parsedData.userType === 3) {
+        setPath("/homeParent");
+      }
     } else {
       console.error("User data not found in local storage");
     }
-    
   }, []);
 
-  const getProfileInfo = async(userId) => {
+  const getProfileInfo = async (userId) => {
     console.log(`Fetching profile info using userId: ${userId}`);
     try {
-      const response = await fetch(`http://34.28.230.12/api/user/getProfile?userId=${userId}`);
+      const response = await fetch(
+        `http://34.28.230.12/api/user/getProfile?userId=${userId}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -45,7 +57,7 @@ const ProfileView = () => {
       setEmail(user.email);
       setPassword(user.password);
       setAddress(user.address);
-      var datePart = user.dob.split('T')[0];
+      var datePart = user.dob.split("T")[0];
       setDOB(datePart);
       setOccupation(user.occupation);
       setStudentIds(user.studentIds);
@@ -55,12 +67,12 @@ const ProfileView = () => {
     }
   };
 
-  const editProfile = async() => {
+  const editProfile = async () => {
     try {
-      const response = await fetch('http://34.28.230.12/api/user/edit', {
-        method: 'PUT',
+      const response = await fetch("http://34.28.230.12/api/user/edit", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         // userId, firstName, lastName, email, password, address, dob, occupation
         body: JSON.stringify({
@@ -72,25 +84,30 @@ const ProfileView = () => {
           address: address,
           dob: dob,
           occupation: occupation,
-          studentIds: studentIds
+          studentIds: studentIds,
         }),
       });
-    
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Profile updated successfully:', data);
-        // Handle success response here
+
+      console.log("Profile updated successfully:", data);
+      // Handle success response here
     } catch (error) {
-      console.error('Could not update profile:', error);
+      console.error("Could not update profile:", error);
     }
   };
-  
   return (
     <div className="h-container">
       <div className="header">
-        <img src={logo} alt="Illini Logo" className="logo" />
+        <img
+          src={logo}
+          alt="Illini Logo"
+          className="logo"
+          onClick={() => navigate(nav_path)}
+        />
         <h1 className="student-title">{userType}</h1>
         <img className="profile-picture" onClick={() => navigate("/profileView")} src={profilePic} alt="Profile Pic"/>
       </div>

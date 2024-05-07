@@ -289,7 +289,8 @@ class ClassroomGroupController{
         const classroomGroup = classroomGroupResponse[0][0];
       
         const classroomGroupRecordingCountResponse = await SQLHelper.executeQuery(await SQLHelper.getClassroomGroupRecordingCount());
-        const recordingCount = classroomGroupRecordingCountResponse[0][0].latestRecordingId;
+        const latestRecordingId = classroomGroupRecordingCountResponse[0][0].latestRecordingId;
+        const recordingCount  = parseInt(latestRecordingId.slice(4)) + 1;
         const recordingId = `CRID${recordingCount.toString().padStart(5, '0')}`;
         if(recordingLink === null || recordingLink === "" || classDate === null || classDate === ""){
             return apiResponse("Please provide all the required details", RESPONSE.HTTP_BAD_REQUEST, {}, res);
